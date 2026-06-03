@@ -3,439 +3,1032 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciador de Concursos - Discord (Salva Dados)</title>
+    <title>SCROX GAMER SPACE - Unified Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
+        /* --- VARIÁVEIS E CORES BASE (TEMA GAMER) --- */
         :root {
-            --bg-color: #313338;
-            --panel-bg: #2b2d31;
-            --text-color: #dbdee1;
-            --accent-color: #5865f2;
-            --accent-hover: #4752c4;
-            --border-color: #3f4147;
+            --bg-space: #07050f;
+            --purple-galactic: #8a2be2;
+            --pink-neon: #ff00cc;
+            --cyan-neon: #00ffff;
+            --lime-neon: #ccff00;
+            --panel-bg: rgba(18, 12, 32, 0.85);
+            --card-hover: linear-gradient(135deg, rgba(138, 43, 226, 0.25), rgba(255, 0, 204, 0.1));
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            user-select: none;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1, h2, h3 {
+            background-color: var(--bg-space);
             color: #ffffff;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: var(--panel-bg);
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .grid { grid-template-columns: 1fr; }
-        }
-
-        .panel {
-            background-color: var(--panel-bg);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            height: fit-content;
-        }
-
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 5px;
-            border: 1px solid var(--border-color);
-            background-color: #1e1f22;
-            color: var(--text-color);
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: var(--accent-color);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background-color: var(--accent-hover);
-        }
-
-        .crit-list, .cand-list {
-            margin-top: 15px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            background: #383a40;
-            margin-bottom: 5px;
-            border-radius: 4px;
-        }
-
-        .btn-del {
-            background-color: #da373c;
-            width: auto;
-            padding: 5px 10px;
-            margin: 0;
-        }
-        .btn-del:hover { background-color: #a92b2f; }
-
-        .btn-reset {
-            background-color: #4e5058;
-            margin-top: 15px;
-        }
-        .btn-reset:hover { background-color: #6d6f78; }
-
-        /* Área de Avaliação */
-        .candidato-card {
-            background-color: #383a40;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border-left: 5px solid var(--accent-color);
-        }
-
-        .cand-info {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .cand-thumb {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 4px;
-            background: #1e1f22;
-        }
-
-        .notas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-        }
-
-        /* Podio */
-        .podium {
+            min-height: 100vh;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .podium-item {
-            display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 15px;
-            border-radius: 6px;
-            background: #383a40;
+            padding-bottom: 50px;
         }
 
-        .pos-1 { border: 2px solid #f1c40f; background: rgba(241, 196, 15, 0.1); }
-        .pos-2 { border: 2px solid #e74c3c; background: rgba(231, 76, 60, 0.1); }
-        .pos-3 { border: 2px solid #e67e22; background: rgba(230, 126, 34, 0.1); }
-        .pos-4 { border: 2px solid #9b59b6; background: rgba(155, 89, 182, 0.1); }
-
-        .medal {
-            font-size: 24px;
-            font-weight: bold;
-            min-width: 40px;
+        /* --- BACKGROUND DE EMOJIS FLUTUANTES --- */
+        .space-background {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; pointer-events: none; overflow: hidden;
         }
+
+        .floating-emoji {
+            position: absolute; font-size: 2rem; opacity: 0.25;
+            animation: floatAnimation 12s infinite linear;
+        }
+
+        @keyframes floatAnimation {
+            0% { transform: translateY(105vh) translateX(0) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) translateX(50px) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        /* --- TÍTULO LED GALÁCTICO --- */
+        .led-container { margin: 35px 0 15px 0; text-align: center; position: relative; }
+        .led-title {
+            font-size: 4.5rem; font-weight: 900; letter-spacing: 4px; text-transform: uppercase;
+            background: linear-gradient(90deg, var(--purple-galactic), var(--pink-neon), var(--cyan-neon), var(--purple-galactic));
+            background-size: 300% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: moveGradient 4s linear infinite, ledGlow 2s ease-in-out infinite alternate;
+        }
+        @keyframes moveGradient { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+        @keyframes ledGlow {
+            0% { filter: drop-shadow(0 0 8px rgba(138, 43, 226, 0.6)) drop-shadow(0 0 20px rgba(255, 0, 204, 0.3)); }
+            100% { filter: drop-shadow(0 0 25px rgba(0, 255, 255, 0.9)) drop-shadow(0 0 40px rgba(138, 43, 226, 0.5)); }
+        }
+
+        /* --- CONTAINER E TELAS --- */
+        .app-container {
+            width: 95%; max-width: 1400px;
+            background: var(--panel-bg); border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 24px; padding: 30px; backdrop-filter: blur(16px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(138, 43, 226, 0.1);
+            min-height: 600px; display: flex; flex-direction: column;
+        }
+
+        .screen { display: none; flex-direction: column; height: 100%; animation: fadeIn 0.4s ease-in-out forwards; }
+        .screen.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .screen-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; margin-bottom: 25px;
+        }
+        .screen-title { font-size: 1.8rem; font-weight: 800; color: var(--cyan-neon); display: flex; align-items: center; gap: 12px; }
+
+        /* --- BOTÕES INTERATIVOS --- */
+        .btn {
+            background: linear-gradient(135deg, var(--purple-galactic), #520fa0); color: white; border: none;
+            padding: 12px 24px; font-size: 1rem; font-weight: 600; border-radius: 12px; cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-flex;
+            align-items: center; justify-content: center; gap: 10px; border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 8px 20px rgba(138, 43, 226, 0.5); filter: brightness(1.2); }
+        .btn:active { transform: translateY(1px); }
+        .btn-secondary { background: linear-gradient(135deg, #251c42, #140e28); }
+        .btn-danger { background: linear-gradient(135deg, #d61c4e, #9b0026); }
+        .btn-success { background: linear-gradient(135deg, #00b4d8, #0077b6); }
+        .btn-eval { background: linear-gradient(135deg, var(--lime-neon), #558800); color: #000; }
+
+        /* --- MENU PRINCIPAL (CARDS DE JOGOS E AVALIAÇÕES) --- */
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        .game-card {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px; padding: 30px 20px; text-align: center; cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        .game-card i {
+            font-size: 3.5rem; background: linear-gradient(135deg, var(--cyan-neon), var(--pink-neon));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: transform 0.3s;
+        }
+        .game-card h3 { font-size: 1.4rem; font-weight: 800; color: #fff; }
+        .game-card p { font-size: 0.9rem; color: #b0a9c0; line-height: 1.4; }
+        .game-card:hover { background: var(--card-hover); border-color: var(--pink-neon); transform: translateY(-10px); box-shadow: 0 15px 30px rgba(255, 0, 204, 0.25); }
+        .game-card:hover i { transform: scale(1.15) rotate(5deg); }
+
+        /* --- INPUTS GERAIS --- */
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
+        input[type="text"], input[type="number"], input[type="file"] {
+            flex: 1; background: rgba(0, 0, 0, 0.4); border: 2px solid rgba(138, 43, 226, 0.4);
+            border-radius: 12px; padding: 12px 18px; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus { border-color: var(--cyan-neon); box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+
+        /* --- LISTAS E CARDS (GENÉRICO) --- */
+        .list-box { background: rgba(0, 0, 0, 0.3); border-radius: 16px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .scroll-list { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; }
+        .item-card {
+            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 18px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .btn-remove-icon { background: none; border: none; color: #ff3366; cursor: pointer; font-size: 1.2rem; transition: transform 0.2s; }
+        .btn-remove-icon:hover { color: #ff0000; transform: scale(1.2); }
+
+        /* --- LAYOUTS ESPECÍFICOS --- */
+        .split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .dashboard-layout { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        @media (max-width: 1024px) { .dashboard-layout { grid-template-columns: 1fr; } }
+
+        /* --- SISTEMA DE AVALIAÇÃO (INTEGRADO) --- */
+        .candidato-card {
+            background: linear-gradient(145deg, rgba(18,12,32,0.9), rgba(10,5,20,0.9));
+            padding: 20px; margin-bottom: 15px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05); border-top: 3px solid var(--purple-galactic);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .candidato-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(138,43,226,0.3); border-color: var(--cyan-neon); }
+        .cand-info { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+        .cand-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 12px; border: 2px solid var(--cyan-neon); box-shadow: 0 0 10px rgba(0,255,255,0.3); background: #000; }
+        .notas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .notas-grid label { color: #b0a9c0; text-transform: uppercase; font-size: 0.75rem; font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .notas-grid input { padding: 8px 12px; font-size: 1.1rem; text-align: center; }
+
+        /* --- PÓDIO (AVALIAÇÃO) --- */
+        .podium { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .podium-item {
+            display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 12px;
+            background: rgba(0,0,0,0.4); border-left: 4px solid transparent; transition: all 0.3s ease;
+        }
+        .podium-item.pos-1 { border-color: #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.15); }
+        .podium-item.pos-2 { border-color: #c0c0c0; }
+        .podium-item.pos-3 { border-color: #cd7f32; }
+        .medal { font-size: 28px; min-width: 40px; text-align: center; }
+        .rank-info { flex-grow: 1; }
+        .progress-bar-bg {
+            width: 100%; background: rgba(255,255,255,0.05); height: 10px; border-radius: 5px; overflow: hidden; margin-top: 8px;
+        }
+        .progress-bar-fill {
+            height: 100%; background: linear-gradient(90deg, var(--purple-galactic), var(--cyan-neon));
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--cyan-neon); border-radius: 5px;
+        }
+
+        /* --- JOGOS (BOMBA & FUTEBOL & SORTEIO) --- */
+        .game-status-bar {
+            background: rgba(138, 43, 226, 0.15); border: 1px solid var(--purple-galactic); border-radius: 12px;
+            padding: 12px; text-align: center; font-size: 1.2rem; font-weight: 700; margin-bottom: 25px; color: var(--cyan-neon);
+        }
+        .bomb-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-width: 480px; margin: 0 auto; }
+        .bomb-tile {
+            background: linear-gradient(145deg, #22193e, #130d27); height: 90px; border-radius: 16px; border: 2px solid var(--purple-galactic);
+            display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: rgba(255, 255, 255, 0.6); cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+        .bomb-tile:hover { transform: scale(1.06); border-color: var(--pink-neon); color: #fff; }
+        .bomb-tile.revealed { background: #0f0a1c; border-color: rgba(255,255,255,0.1); cursor: not-allowed; transform: none; }
+        .bomb-tile.diamond { background: linear-gradient(145deg, #00f0ff, #0077b6); border-color: var(--cyan-neon); text-shadow: 0 0 10px #fff; font-size: 2.2rem; }
+        .bomb-tile.exploded { background: linear-gradient(145deg, #ff0055, #9b0026); border-color: #ff3366; font-size: 2.2rem; }
+
+        .football-arena { display: flex; flex-direction: column; align-items: center; gap: 25px; }
+        .goal-container {
+            width: 100%; max-width: 600px; height: 260px; background: rgba(0, 0, 0, 0.5);
+            border: 6px solid #ffffff; border-bottom: none; position: relative; border-radius: 12px 12px 0 0; overflow: hidden;
+        }
+        .goal-net { position: absolute; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.1) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,0.1) 2px, transparent 2px); background-size: 20px 20px; }
+        .goalkeeper { position: absolute; bottom: 10px; left: calc(50% - 35px); font-size: 4rem; transition: all 0.5s; z-index: 5; }
+        .football { position: absolute; bottom: 15px; left: calc(50% - 20px); font-size: 2.5rem; transition: all 0.5s; z-index: 10; }
+        .shoot-controls { display: flex; gap: 15px; justify-content: center; width: 100%; }
+
+        .raffle-box { background: rgba(0,0,0,0.3); border: 2px dashed var(--cyan-neon); border-radius: 20px; padding: 40px; text-align: center; max-width: 500px; margin: 0 auto; width: 100%; }
+        .raffle-display { font-size: 2.5rem; font-weight: 900; margin: 30px 0; min-height: 70px; color: #fff; text-shadow: 0 0 15px var(--cyan-neon); }
+        .raffle-display.rolling { opacity: 0.7; color: var(--pink-neon); }
+
+        /* --- DASHBOARD TABLES & LOGS --- */
+        .rank-table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden; }
+        .rank-table th { background: rgba(138, 43, 226, 0.3); padding: 12px 15px; text-align: left; font-weight: 700; color: var(--cyan-neon); }
+        .rank-table td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .log-terminal { background: #05030a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 15px; height: 400px; overflow-y: auto; font-family: monospace; font-size: 0.9rem; display: flex; flex-direction: column; gap: 6px; }
+        .log-line { border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 4px; }
+        .log-line .time { color: #7f7593; margin-right: 8px; }
+        .log-line .tag { color: var(--pink-neon); font-weight: bold; margin-right: 6px; }
+
+        /* --- RODAPÉ E MODAL --- */
+        .nav-footer { margin-top: auto; display: flex; gap: 10px; padding-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.1); flex-wrap: wrap; justify-content: center; }
+        
+        .celebration-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 3, 10, 0.85); z-index: 999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .celebration-modal { background: linear-gradient(135deg, #180a30, #0a0418); border: 3px solid var(--cyan-neon); border-radius: 30px; padding: 50px 40px; text-align: center; max-width: 500px; width: 90%; box-shadow: 0 0 50px var(--purple-galactic); animation: modalPop 0.5s forwards; }
+        @keyframes modalPop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .celebration-modal h2 { font-size: 2.5rem; font-weight: 900; color: var(--pink-neon); margin-bottom: 15px; }
+        .celebration-modal .winner-title-name { font-size: 2.2rem; font-weight: 800; color: var(--cyan-neon); margin-bottom: 25px; text-shadow: 0 0 15px rgba(0, 255, 255, 0.6); }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--purple-galactic); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cyan-neon); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h1>🏆 Painel de Concursos Discord</h1>
-        <p>Seus dados são salvos automaticamente neste navegador!</p>
+    <div class="space-background" id="spaceBg"></div>
+
+    <div class="led-container">
+        <h1 class="led-title">SCROX GAMER SPACE</h1>
     </div>
 
-    <div class="grid">
-        <div class="panel">
-            <h2>1. Critérios de Avaliação</h2>
-            <div style="display: flex; gap: 5px;">
-                <input type="text" id="crit-nome" placeholder="Ex: Criatividade">
-                <input type="number" id="crit-peso" placeholder="Peso" style="width: 70px;" min="1" value="1">
-                <button onclick="adicionarCriterio()" style="width: auto;">+</button>
+    <div class="app-container">
+
+        <!-- TELA 1: MENU PRINCIPAL -->
+        <div class="screen active" id="screenMenu">
+            <div class="screen-header">
+                <h2 class="screen-title"><i class="fa-solid fa-house-laptop"></i> Arena Inicial</h2>
+                <button class="btn btn-danger" onclick="globalReset()"><i class="fa-solid fa-rotate"></i> Reset Geral do App</button>
             </div>
-            <div id="lista-criterios" class="crit-list"></div>
-
-            <hr style="border-color: var(--border-color); margin: 20px 0;">
-
-            <h2>2. Adicionar Candidato</h2>
-            <input type="text" id="cand-nome" placeholder="Nome do Candidato (ex: @User)">
-            <label style="font-size: 12px; color: #aaa;">Foto do Candidato:</label>
-            <input type="file" id="cand-foto" accept="image/*">
-            <button onclick="adicionarCandidato()">Adicionar à Lista</button>
-            <div id="lista-nomes-candidatos" class="cand-list"></div>
-
-            <hr style="border-color: var(--border-color); margin: 20px 0;">
-            
-            <button class="btn-reset" onclick="limparTudo()">🧹 Resetar Todo o Concurso</button>
-        </div>
-
-        <div>
-            <div class="panel" style="margin-bottom: 20px;">
-                <h2>📊 Classificação Atual</h2>
-                <div id="podio" class="podium">
-                    <p style="color: #aaa;">Adicione critérios e candidatos com notas para calcular o pódio.</p>
+            <div class="menu-grid">
+                <div class="game-card" onclick="changeScreen('screenPlayers')">
+                    <i class="fa-solid fa-users-gear"></i>
+                    <h3>Gerenciar Time (Jogos)</h3>
+                    <p>Adicione ou remova os participantes para os mini-games.</p>
+                </div>
+                <div class="game-card" onclick="changeScreen('screenAvaliacao')">
+                    <i class="fa-solid fa-gavel" style="background: linear-gradient(135deg, var(--lime-neon), var(--cyan-neon)); -webkit-background-clip: text;"></i>
+                    <h3>Central de Avaliações</h3>
+                    <p>Gerencie concursos, critérios, candidatos e notas com pódio.</p>
+                </div>
+                <div class="game-card" onclick="initBombGame()">
+                    <i class="fa-solid fa-bomb"></i>
+                    <h3>Jogo da Bomba</h3>
+                    <p>Encontre os diamantes reluzentes para somar XP.</p>
+                </div>
+                <div class="game-card" onclick="initFootballGame()">
+                    <i class="fa-solid fa-futbol"></i>
+                    <h3>Pênaltis Neon</h3>
+                    <p>Escolha o canto do chute em um duelo emocionante.</p>
+                </div>
+                <div class="game-card" onclick="changeScreen('screenRaffle')">
+                    <i class="fa-solid fa-ticket-simple"></i>
+                    <h3>Sorteio Rápido</h3>
+                    <p>Sorteie aleatoriamente prêmios entre o time de jogos.</p>
                 </div>
             </div>
-
-            <div class="panel">
-                <h2>✍️ Notas dos Candidatos</h2>
-                <div id="quadro-avaliacao">
-                    <p style="color: #aaa;">Nenhum candidato pronto para avaliação.</p>
-                </div>
-            </div>
+            <button class="btn btn-success" style="width: 100%; padding: 18px; font-size: 1.2rem;" onclick="changeScreen('screenDashboard')">
+                <i class="fa-solid fa-chart-pie"></i> Abrir Dashboard Global (Jogos & Avaliações)
+            </button>
         </div>
-    </div>
-</div>
 
-<script>
-    let criterios = [];
-    let candidatos = [];
-
-    // --- CARREGAR DADOS AO ABRIR O SITE ---
-    window.onload = function() {
-        const dadosSalvosCrit = localStorage.getItem('discord_concurso_criterios');
-        const dadosSalvosCand = localStorage.getItem('discord_concurso_candidatos');
-
-        if(dadosSalvosCrit) criterios = JSON.parse(dadosSalvosCrit);
-        if(dadosSalvosCand) candidatos = JSON.parse(dadosSalvosCand);
-
-        atualizarInterface();
-    };
-
-    // --- FUNÇÃO PARA SALVAR AUTOMATICAMENTE ---
-    function salvarNoNavegador() {
-        localStorage.setItem('discord_concurso_criterios', JSON.stringify(criterios));
-        localStorage.setItem('discord_concurso_candidatos', JSON.stringify(candidatos));
-    }
-
-    // --- FUNÇÕES DE CRITÉRIOS ---
-    function adicionarCriterio() {
-        const nomeIn = document.getElementById('crit-nome');
-        const pesoIn = document.getElementById('crit-peso');
-        
-        if(!nomeIn.value.trim()) return alert('Digite o nome do critério!');
-
-        criterios.push({
-            id: Date.now().toString(),
-            nome: nomeIn.value.trim(),
-            peso: parseFloat(pesoIn.value) || 1
-        });
-
-        nomeIn.value = '';
-        pesoIn.value = '1';
-        
-        salvarNoNavegador();
-        atualizarInterface();
-    }
-
-    function removerCriterio(id) {
-        criterios = criterios.filter(c => c.id !== id);
-        candidatos.forEach(cand => delete cand.notas[id]);
-        salvarNoNavegador();
-        atualizarInterface();
-    }
-
-    // --- FUNÇÕES DE CANDIDATOS ---
-    function adicionarCandidato() {
-        const nomeIn = document.getElementById('cand-nome');
-        const fotoIn = document.getElementById('cand-foto');
-
-        if(!nomeIn.value.trim()) return alert('Digite o nome do candidato!');
-        if(!fotoIn.files[0]) return alert('Selecione a foto do candidato!');
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            candidatos.push({
-                id: Date.now().toString(),
-                nome: nomeIn.value.trim(),
-                foto: e.target.result, // A foto vira texto base64 e salva direto na memória
-                notas: {}
-            });
-            
-            nomeIn.value = '';
-            fotoIn.value = '';
-            salvarNoNavegador();
-            atualizarInterface();
-        };
-        reader.readAsDataURL(fotoIn.files[0]);
-    }
-
-    function removerCandidato(id) {
-        candidatos = candidatos.filter(c => c.id !== id);
-        salvarNoNavegador();
-        atualizarInterface();
-    }
-
-    // --- ATUALIZAÇÃO DA NOTA ---
-    function atualizarNota(candId, critId, nota) {
-        const cand = candidatos.find(c => c.id === candId);
-        if(cand) {
-            cand.notas[critId] = parseFloat(nota) || 0;
-            salvarNoNavegador(); // Salva a nota digitada na hora
-            calcularResultados();
-        }
-    }
-
-    // --- LIMPAR TUDO PARA NOVO CONCURSO ---
-    function limparTudo() {
-        if(confirm("Tem certeza que deseja apagar TODOS os candidatos, fotos e critérios desse concurso?")) {
-            localStorage.removeItem('discord_concurso_criterios');
-            localStorage.removeItem('discord_concurso_candidatos');
-            criterios = [];
-            candidatos = [];
-            atualizarInterface();
-        }
-    }
-
-    // --- PROCESSAMENTO E CÁLCULO ---
-    function calcularResultados() {
-        if(candidatos.length === 0 || criterios.length === 0) {
-            document.getElementById('podio').innerHTML = '<p style="color: #aaa;">Aguardando dados suficientes...</p>';
-            return;
-        }
-
-        let totalPesos = criterios.reduce((acc, c) => acc + c.peso, 0);
-
-        let classificados = candidatos.map(cand => {
-            let somaNotas = 0;
-            criterios.forEach(crit => {
-                let nota = cand.notas[crit.id] || 0;
-                somaNotas += nota * crit.peso;
-            });
-            let media = totalPesos > 0 ? (somaNotas / totalPesos) : 0;
-            return { ...cand, media: media };
-        });
-
-        classificados.sort((a, b) => b.media - a.media);
-
-        const podioDiv = document.getElementById('podio');
-        podioDiv.innerHTML = '';
-
-        classificados.forEach((cand, index) => {
-            if(index > 3) return;
-
-            let classePos = '';
-            let medalha = '';
-
-            if(index === 0) { classePos = 'pos-1'; medalha = '🥇 1º'; }
-            else if(index === 1) { classePos = 'pos-2'; medalha = '🥈 2º'; }
-            else if(index === 2) { classePos = 'pos-3'; medalha = '🥉 3º'; }
-            else if(index === 3) { classePos = 'pos-4'; medalha = '🎖️ M.H.'; }
-
-            podioDiv.innerHTML += `
-                <div class="podium-item ${classePos}">
-                    <div class="medal">${medalha}</div>
-                    <img src="${cand.foto}" class="cand-thumb" alt="">
-                    <div>
-                        <strong>${cand.nome}</strong><br>
-                        <small>Média: ${cand.media.toFixed(2)}</small>
+        <!-- TELA 2: GERENCIAR TIME (JOGOS) -->
+        <div class="screen" id="screenPlayers">
+            <div class="screen-header">
+                <h2 class="screen-title"><i class="fa-solid fa-users"></i> Gerenciamento de Time (Jogos)</h2>
+                <button class="btn btn-secondary" onclick="changeScreen('screenMenu')"><i class="fa-solid fa-chevron-left"></i> Voltar</button>
+            </div>
+            <div class="split-layout">
+                <div>
+                    <h3 style="margin-bottom: 15px; color: var(--pink-neon);">Recrutar Gamer</h3>
+                    <div class="input-group">
+                        <input type="text" id="newPlayerName" placeholder="Nickname do Discord..." onkeypress="if(event.key === 'Enter') registerPlayer()">
+                        <button class="btn" onclick="registerPlayer()"><i class="fa-solid fa-plus"></i></button>
                     </div>
                 </div>
-            `;
-        });
-    }
-
-    // --- ATUALIZAÇÃO GERAL DA INTERFACE ---
-    function atualizarInterface() {
-        const listCrit = document.getElementById('lista-criterios');
-        listCrit.innerHTML = '';
-        criterios.forEach(c => {
-            listCrit.innerHTML += `
-                <div class="item-row">
-                    <span>${c.nome} (Peso: ${c.peso})</span>
-                    <button class="btn-del" onclick="removerCriterio('${c.id}')">X</button>
+                <div>
+                    <h3 style="margin-bottom: 15px; color: var(--cyan-neon);">Jogadores na Call (<span id="playerCountLabel">0</span>)</h3>
+                    <div class="list-box">
+                        <div class="scroll-list" id="uiPlayerList"></div>
+                    </div>
                 </div>
-            `;
-        });
+            </div>
+        </div>
 
-        const listCandNomes = document.getElementById('lista-nomes-candidatos');
-        listCandNomes.innerHTML = '';
-        candidatos.forEach(c => {
-            listCandNomes.innerHTML += `
-                <div class="item-row">
-                    <span>${c.nome}</span>
-                    <button class="btn-del" onclick="removerCandidato('${c.id}')">X</button>
+        <!-- TELA 3: CENTRAL DE AVALIAÇÕES (CONCURSO) -->
+        <div class="screen" id="screenAvaliacao">
+            <div class="screen-header">
+                <h2 class="screen-title"><i class="fa-solid fa-gavel"></i> Painel de Concursos & Avaliações</h2>
+                <div>
+                    <button class="btn btn-danger" onclick="resetConcurso()"><i class="fa-solid fa-trash"></i> Resetar Concurso</button>
+                    <button class="btn btn-secondary" onclick="changeScreen('screenMenu')"><i class="fa-solid fa-chevron-left"></i> Voltar</button>
                 </div>
-            `;
-        });
+            </div>
+            
+            <div class="split-layout" style="margin-bottom: 30px;">
+                <!-- Cadastro de Critérios -->
+                <div class="list-box">
+                    <h3 style="margin-bottom: 15px; color: var(--cyan-neon); border-bottom: 2px solid var(--purple-galactic); padding-bottom: 5px;">1. Critérios</h3>
+                    <div class="input-group">
+                        <input type="text" id="critNome" placeholder="Ex: Criatividade">
+                        <input type="number" id="critPeso" placeholder="Peso" style="max-width: 90px;" min="1" value="1">
+                        <button class="btn btn-eval" onclick="addCriterio()"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <div class="scroll-list" id="uiCriteriosList"></div>
+                </div>
 
-        const quadro = document.getElementById('quadro-avaliacao');
-        if(candidatos.length === 0) {
-            quadro.innerHTML = '<p style="color: #aaa;">Nenhum candidato pronto para avaliação.</p>';
-            calcularResultados();
-            return;
+                <!-- Cadastro de Candidatos -->
+                <div class="list-box">
+                    <h3 style="margin-bottom: 15px; color: var(--pink-neon); border-bottom: 2px solid var(--purple-galactic); padding-bottom: 5px;">2. Candidatos</h3>
+                    <div class="input-group">
+                        <input type="text" id="candNome" placeholder="Nome do Avaliado...">
+                    </div>
+                    <div class="input-group">
+                        <input type="file" id="candFoto" accept="image/*" style="font-size: 0.8rem;">
+                        <button class="btn btn-eval" onclick="addCandidato()"><i class="fa-solid fa-user-plus"></i></button>
+                    </div>
+                    <div class="scroll-list" id="uiCandidatosList"></div>
+                </div>
+            </div>
+
+            <!-- Central de Notas -->
+            <h3 style="margin-bottom: 15px; color: #fff; font-size: 1.5rem;"><i class="fa-solid fa-pen-to-square"></i> Central de Lançamento de Notas</h3>
+            <div id="uiQuadroAvaliacao" style="display: grid; grid-template-columns: 1fr; gap: 15px; max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                <!-- Cards de candidatos gerados via JS -->
+            </div>
+        </div>
+
+        <!-- TELA 4: BOMBA -->
+        <div class="screen" id="screenBomb">
+            <div class="screen-header">
+                <h2 class="screen-title"><i class="fa-solid fa-bomb"></i> Campo Minado da Bomba</h2>
+                <div>
+                    <button class="btn btn-success" onclick="startNewBombMatch()" style="margin-right: 10px;"><i class="fa-solid fa-play"></i> Nova Partida</button>
+                    <button class="btn btn-secondary" onclick="changeScreen('screenMenu')"><i class="fa-solid fa-chevron-left"></i> Menu</button>
+                </div>
+            </div>
+            
+            <!-- Caixa de seleção de bombas com botão confirmar -->
+            <div class="input-group" style="max-width: 440px; margin: 0 auto 20px auto; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                <span style="font-weight: 600; color: var(--pink-neon); font-size: 0.95rem; text-transform: uppercase;">Bombas (1-15):</span>
+                <input type="number" id="bombCountInput" min="1" max="15" value="2" style="max-width: 90px; text-align: center; margin-bottom: 0;">
+                <button class="btn btn-success" onclick="confirmBombCount()" style="padding: 10px 18px; font-size: 0.9rem;"><i class="fa-solid fa-check"></i> Confirmar</button>
+            </div>
+
+            <div class="game-status-bar" id="bombStatusBar">Aguardando início...</div>
+            <div class="bomb-grid" id="uiBombGrid" style="margin-bottom: 35px;"></div>
+
+            <!-- Lista organizada rigorosamente Lado a Lado (Esquerda e Direita) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; margin: 0 auto; width: 100%;">
+                <div class="list-box" style="border-top: 3px solid var(--cyan-neon);">
+                    <h4 style="color: var(--cyan-neon); margin-bottom: 12px;"><i class="fa-solid fa-heart"></i> Ainda Vivos (<span id="bombAliveCount">0</span>)</h4>
+                    <div id="uiBombAliveList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                </div>
+                <div class="list-box" style="border-top: 3px solid var(--pink-neon);">
+                    <h4 style="color: var(--pink-neon); margin-bottom: 12px;"><i class="fa-solid fa-skull"></i> Eliminados (<span id="bombDeadCount">0</span>)</h4>
+                    <div id="uiBombDeadList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA 5: FUTEBOL -->
+        <div class="screen" id="screenFootball">
+            <div class="screen-header">
+                <h2 class="screen-title"><i class="fa-solid fa-futbol"></i> Disputa de Pênaltis Neon</h2>
+                <div>
+                    <button class="btn btn-success" onclick="startNewFootballMatch()" style="margin-right: 10px;"><i class="fa-solid fa-play"></i> Nova Partida</button>
+                    <button class="btn btn-secondary" onclick="changeScreen('screenMenu')"><i class="fa-solid fa-chevron-left"></i> Menu</button>
+                </div>
+            </div>
+            <div class="game-status-bar" id="footballStatusBar">Vez de chutar!</div>
+            <div class="football-arena" style="margin-bottom: 35px;">
+                <div class="goal-container">
+                    <div class="goal-net"></div>
+                    <div class="goalkeeper" id="gkActor">🕴️</div>
+                    <div class="football" id="ballActor">⚽</div>
+                </div>
+                <div class="shoot-controls">
+                    <button class="btn btn-success" onclick="executeKick('esquerda')"><i class="fa-solid fa-arrow-left"></i> Esquerda</button>
+                    <button class="btn btn-success" onclick="executeKick('centro')"><i class="fa-solid fa-arrows-to-dot"></i> Meio</button>
+                    <button class="btn btn-success" onclick="executeKick('direita')">Direita <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Lista organizada rigorosamente Lado a Lado (Esquerda e Direita) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; margin: 0 auto; width: 100%;">
+                <div class="list-box" style="border-top: 3px solid var(--cyan-neon);">
+                    <h4 style="color: var(--cyan-neon); margin-bottom: 12px;"><i class="fa-solid fa-heart"></i> Ainda em Jogo (<span id="footballAliveCount">0</span>)</h4>
+                    <div id="uiFootballAliveList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                </div>
+                <div class="list-box" style="border-top: 3px solid var(--pink-neon);">
+                    <h4 style="color: var(--pink-neon); margin-bottom: 12px;"><i class="fa-solid fa-skull"></i> Eliminados (<span id="footballDeadCount">0</span>)</h4>
+                    <div id="uiFootballDeadList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA 6: SORTEIO -->
+        <div class="screen" id="screenRaffle">
+            <div class="screen-header">
+                <h2 class="screen-title"><i class="fa-solid fa-ticket-simple"></i> Sorteio Galáctico</h2>
+                <button class="btn btn-secondary" onclick="changeScreen('screenMenu')"><i class="fa-solid fa-chevron-left"></i> Menu</button>
+            </div>
+            <div class="raffle-box">
+                <h3 style="color: #fff;">Quem será o sortudo?</h3>
+                <div class="raffle-display" id="uiRaffleDisplay">---</div>
+                <button class="btn btn-danger" style="width: 100%; font-size: 1.2rem; padding: 15px;" onclick="triggerRaffle()">
+                    <i class="fa-solid fa-clover"></i> SORTEAR AGORA
+                </button>
+            </div>
+        </div>
+
+        <!-- TELA 7: DASHBOARD GLOBAL -->
+        <div class="screen" id="screenDashboard">
+            <div class="screen-header">
+                <h2 class="screen-title"><i class="fa-solid fa-chart-line"></i> Dashboard Global</h2>
+                <div>
+                    <button class="btn btn-success" onclick="exportToCSV()" style="margin-right: 10px;"><i class="fa-solid fa-file-csv"></i> Extrair Logs</button>
+                    <button class="btn btn-secondary" onclick="changeScreen('screenMenu')"><i class="fa-solid fa-chevron-left"></i> Menu</button>
+                </div>
+            </div>
+            <div class="dashboard-layout">
+                <!-- Coluna 1: Ranking XP dos Jogos -->
+                <div class="list-box" style="padding: 15px;">
+                    <h3 style="margin-bottom: 15px; color: var(--cyan-neon);"><i class="fa-solid fa-trophy"></i> Rank. XP (Jogos)</h3>
+                    <table class="rank-table">
+                        <thead><tr><th>Pos</th><th>Jogador</th><th>XP</th></tr></thead>
+                        <tbody id="uiRankTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Coluna 2: Pódio das Avaliações (Win Rate) -->
+                <div class="list-box" style="padding: 15px;">
+                    <h3 style="margin-bottom: 15px; color: var(--lime-neon);"><i class="fa-solid fa-medal"></i> Pódio (Avaliações)</h3>
+                    <div id="uiDashboardPodio" class="podium">
+                        <p style="color: #7f7593; font-style: italic;">Aguardando notas da Central de Avaliações...</p>
+                    </div>
+                </div>
+
+                <!-- Coluna 3: Logs Gerais -->
+                <div class="list-box" style="padding: 15px;">
+                    <h3 style="margin-bottom: 15px; color: var(--pink-neon);"><i class="fa-solid fa-terminal"></i> Histórico / Logs</h3>
+                    <div class="log-terminal" id="uiLogTerminal"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER NAVEGAÇÃO RÁPIDA -->
+        <div class="nav-footer">
+            <button class="btn btn-secondary" onclick="changeScreen('screenMenu')"><i class="fa-solid fa-house"></i> Início</button>
+            <button class="btn btn-secondary" onclick="changeScreen('screenPlayers')"><i class="fa-solid fa-users"></i> Time</button>
+            <button class="btn btn-secondary" onclick="changeScreen('screenAvaliacao')"><i class="fa-solid fa-gavel"></i> Avaliações</button>
+            <button class="btn btn-secondary" onclick="initBombGame()"><i class="fa-solid fa-bomb"></i> Bomba</button>
+            <button class="btn btn-secondary" onclick="initFootballGame()"><i class="fa-solid fa-futbol"></i> Futebol</button>
+            <button class="btn btn-secondary" onclick="changeScreen('screenDashboard')"><i class="fa-solid fa-chart-simple"></i> Dashboard</button>
+        </div>
+
+    </div>
+
+    <!-- MODAL CELEBRATIVO -->
+    <div class="celebration-overlay" id="victoryModal">
+        <div class="celebration-modal">
+            <h2>🏆 Vencedor 🏆</h2>
+            <div class="winner-title-name" id="uiWinnerModalName">PLAYER NAME</div>
+            <p style="color: #b0a9c0; margin-bottom: 25px;">Mandou muito bem e conquistou o topo!</p>
+            <button class="btn btn-success" onclick="closeVictoryModal()"><i class="fa-solid fa-square-check"></i> OK</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. ESTADOS DO SISTEMA ---
+        let players = JSON.parse(localStorage.getItem('scrox_players_unified')) || [];
+        let systemLogs = JSON.parse(localStorage.getItem('scrox_logs_unified')) || [];
+        let currentTurnIndex = 0;
+        let bombGameTiles = [];
+        let isRaffleRolling = false;
+
+        let bombActivePlayers = [];
+        let bombEliminatedPlayers = [];
+        let bombCurrentTurn = 0;
+
+        let footballActivePlayers = [];
+        let footballEliminatedPlayers = [];
+        let footballCurrentTurn = 0;
+
+        let criterios = JSON.parse(localStorage.getItem('scrox_criterios_unified')) || [];
+        let candidatos = JSON.parse(localStorage.getItem('scrox_candidatos_unified')) || [];
+
+        // --- 2. BACKGROUND ANIMATION ---
+        const emojisList = ['🎮', '👾', '🚀', '⚽', '💎', '💣', '🏆', '🔥', '🕹️', '🎯', '💯'];
+        const spaceBg = document.getElementById('spaceBg');
+        for (let i = 0; i < 25; i++) {
+            let el = document.createElement('div');
+            el.className = 'floating-emoji';
+            el.innerText = emojisList[Math.floor(Math.random() * emojisList.length)];
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.animationDuration = (Math.random() * 6 + 7) + 's';
+            el.style.animationDelay = (Math.random() * 5) + 's';
+            spaceBg.appendChild(el);
         }
 
-        quadro.innerHTML = '';
-        candidatos.forEach(cand => {
-            let htmlNotas = '';
+        // --- FUNÇÃO PARA GERAR SOM DA ROLETA (WEB AUDIO API) ---
+        function playRaffleSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const now = ctx.currentTime;
+                
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.4);
+                
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.4);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } catch (e) {
+                console.log("Audio contextual playback block bypassed.", e);
+            }
+        }
+
+        // --- 3. NAVEGAÇÃO E PERSISTÊNCIA GERAL ---
+        function changeScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(scr => scr.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            renderInterface();
+        }
+
+        function persistData() {
+            localStorage.setItem('scrox_players_unified', JSON.stringify(players));
+            localStorage.setItem('scrox_logs_unified', JSON.stringify(systemLogs));
+            localStorage.setItem('scrox_criterios_unified', JSON.stringify(criterios));
+            localStorage.setItem('scrox_candidatos_unified', JSON.stringify(candidatos));
+        }
+
+        function registerLog(tag, msg) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('pt-BR');
+            systemLogs.push({ date: now.toLocaleDateString('pt-BR'), time: timeStr, tag: tag, msg: msg });
+            if(systemLogs.length > 100) systemLogs.shift();
+            persistData();
+        }
+
+        function globalReset() {
+            if(confirm("💥 ATENÇÃO! Isso deletará TODOS os jogadores, notas, candidatos, históricos e configurações de jogos e avaliações. Prosseguir?")) {
+                localStorage.clear();
+                players = []; systemLogs = []; criterios = []; candidatos = []; currentTurnIndex = 0;
+                bombActivePlayers = []; bombEliminatedPlayers = []; bombCurrentTurn = 0;
+                footballActivePlayers = []; footballEliminatedPlayers = []; footballCurrentTurn = 0;
+                registerLog("SISTEMA", "Painel resetado para o padrão de fábrica.");
+                renderInterface();
+                changeScreen('screenMenu');
+            }
+        }
+
+        // --- 4. GESTÃO DE TIME (JOGOS) ---
+        function registerPlayer() {
+            const name = document.getElementById('newPlayerName').value.trim();
+            if(!name) return;
+            if(players.some(p => p.name.toLowerCase() === name.toLowerCase())) return alert("Jogador já registrado!");
+            players.push({ name: name, xp: 0 });
+            document.getElementById('newPlayerName').value = '';
+            registerLog("SISTEMA", `${name} entrou na arena gamer.`);
+            persistData(); renderInterface();
+        }
+        function unregisterPlayer(name) {
+            players = players.filter(p => p.name !== name);
+            registerLog("SISTEMA", `${name} foi removido da arena.`);
+            if(currentTurnIndex >= players.length) currentTurnIndex = 0;
+            persistData(); renderInterface();
+        }
+
+        // --- 5. GESTÃO DE AVALIAÇÕES (CONCURSOS) ---
+        function addCriterio() {
+            const nome = document.getElementById('critNome').value.trim();
+            const peso = parseFloat(document.getElementById('critPeso').value) || 1;
+            if(!nome) return alert('Digite o nome do critério!');
+            criterios.push({ id: Date.now().toString(), nome, peso });
+            document.getElementById('critNome').value = '';
+            document.getElementById('critPeso').value = '1';
+            registerLog("AVALIAÇÃO", `Critério '${nome}' adicionado (Peso: ${peso}).`);
+            persistData(); renderInterface();
+        }
+        function removerCriterio(id) {
+            criterios = criterios.filter(c => c.id !== id);
+            candidatos.forEach(cand => delete cand.notas[id]);
+            persistData(); renderInterface();
+        }
+
+        function addCandidato() {
+            const nome = document.getElementById('candNome').value.trim();
+            const fotoIn = document.getElementById('candFoto');
+            if(!nome) return alert('Digite o nome do candidato!');
+            if(!fotoIn.files[0]) return alert('Selecione a foto do candidato (Avatar)!');
             
-            if(criterios.length === 0) {
-                htmlNotas = '<p style="color: #aaa; font-size: 13px;">Adicione critérios primeiro para dar notas.</p>';
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                candidatos.push({ id: Date.now().toString(), nome: nome, foto: e.target.result, notas: {} });
+                document.getElementById('candNome').value = ''; fotoIn.value = '';
+                registerLog("AVALIAÇÃO", `Candidato '${nome}' registrado para avaliação.`);
+                persistData(); renderInterface();
+            };
+            reader.readAsDataURL(fotoIn.files[0]);
+        }
+        function removerCandidato(id) {
+            candidatos = candidatos.filter(c => c.id !== id);
+            persistData(); renderInterface();
+        }
+        function atualizarNota(candId, critId, nota) {
+            const cand = candidatos.find(c => c.id === candId);
+            if(cand) {
+                cand.notas[critId] = parseFloat(nota) || 0;
+                persistData();
+                renderPodium();
+            }
+        }
+        function resetConcurso() {
+            if(confirm("Deseja apagar apenas os dados de avaliação (Critérios e Candidatos)?")) {
+                criterios = []; candidatos = [];
+                registerLog("AVALIAÇÃO", "Painel de Concursos foi resetado.");
+                persistData(); renderInterface();
+            }
+        }
+
+        // --- 6. RENDERIZAÇÃO DE UI UNIFICADA ---
+        function renderInterface() {
+            document.getElementById('playerCountLabel').innerText = players.length;
+            document.getElementById('uiPlayerList').innerHTML = players.map(p => `
+                <div class="item-card">
+                    <span><i class="fa-solid fa-gamepad" style="color:var(--cyan-neon); margin-right:8px;"></i> ${p.name}</span>
+                    <button class="btn-remove-icon" onclick="unregisterPlayer('${p.name}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('') || '<p style="color:#7f7593; font-style:italic;">Nenhum participante.</p>';
+
+            document.getElementById('uiCriteriosList').innerHTML = criterios.map(c => `
+                <div class="item-card" style="border-left: 3px solid var(--lime-neon);">
+                    <span><b>${c.nome}</b> <small style="color:var(--cyan-neon)">(Peso: ${c.peso})</small></span>
+                    <button class="btn-remove-icon" onclick="removerCriterio('${c.id}')"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            `).join('');
+
+            document.getElementById('uiCandidatosList').innerHTML = candidatos.map(c => `
+                <div class="item-card" style="border-left: 3px solid var(--pink-neon);">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <img src="${c.foto}" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">
+                        <span>${c.nome}</span>
+                    </div>
+                    <button class="btn-remove-icon" onclick="removerCandidato('${c.id}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+
+            const quadro = document.getElementById('uiQuadroAvaliacao');
+            if(candidatos.length === 0) {
+                quadro.innerHTML = '<p style="color: #7f7593; font-style: italic;">Nenhum candidato para avaliar.</p>';
             } else {
-                criterios.forEach(crit => {
-                    let valorNota = cand.notas[crit.id] !== undefined ? cand.notas[crit.id] : '';
-                    htmlNotas += `
-                        <div>
-                            <label style="font-size:12px; display:block;">${crit.nome}:</label>
-                            <input type="number" min="0" max="10" step="0.5" placeholder="Nota 0-10" 
-                                value="${valorNota}" 
-                                oninput="atualizarNota('${cand.id}', '${crit.id}', this.value)">
+                quadro.innerHTML = candidatos.map(cand => {
+                    let htmlNotas = criterios.length === 0 
+                        ? '<p style="color: #ff3366; font-size: 13px;">⚠ Cadastre critérios para dar nota.</p>' 
+                        : criterios.map(crit => `
+                            <div>
+                                <label>${crit.nome}</label>
+                                <input type="number" min="0" max="10" step="0.5" placeholder="0-10" 
+                                    value="${cand.notas[crit.id] !== undefined ? cand.notas[crit.id] : ''}" 
+                                    oninput="atualizarNota('${cand.id}', '${crit.id}', this.value)">
+                            </div>
+                        `).join('');
+
+                    return `
+                    <div class="candidato-card">
+                        <div class="cand-info">
+                            <img src="${cand.foto}" class="cand-thumb" alt="Foto">
+                            <h3 style="margin:0; font-size: 1.4em; color:var(--cyan-neon);">${cand.nome}</h3>
                         </div>
-                    `;
-                });
+                        <div class="notas-grid">${htmlNotas}</div>
+                    </div>`;
+                }).join('');
             }
 
-            quadro.innerHTML += `
-                <div class="candidato-card">
-                    <div class="cand-info">
-                        <img src="${cand.foto}" class="cand-thumb" alt="Foto">
-                        <h3>${cand.nome}</h3>
+            const sortedPlayers = [...players].sort((a,b) => b.xp - a.xp);
+            document.getElementById('uiRankTableBody').innerHTML = sortedPlayers.map((p, idx) => {
+                let medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}º`;
+                return `<tr>
+                    <td style="font-weight:bold; color:var(--pink-neon);">${medal}</td>
+                    <td><b>${p.name}</b></td>
+                    <td style="color:var(--cyan-neon); font-weight:bold;">${p.xp} XP</td>
+                </tr>`;
+            }).join('') || `<tr><td colspan="3" style="text-align:center; color:#7f7593;">Sem registros.</td></tr>`;
+
+            const terminal = document.getElementById('uiLogTerminal');
+            terminal.innerHTML = systemLogs.map(l => `
+                <div class="log-line"><span class="time">[${l.time}]</span><span class="tag">[${l.tag}]</span> ${l.msg}</div>
+            `).join('');
+            terminal.scrollTop = terminal.scrollHeight;
+
+            renderPodium();
+        }
+
+        function renderPodium() {
+            const podioDiv = document.getElementById('uiDashboardPodio');
+            if(candidatos.length === 0 || criterios.length === 0) {
+                podioDiv.innerHTML = '<p style="color: #7f7593; font-style: italic;">Aguardando candidatos e critérios...</p>';
+                return;
+            }
+
+            let totalPesos = criterios.reduce((acc, c) => acc + c.peso, 0);
+            let classificados = candidatos.map(cand => {
+                let somaNotas = 0;
+                criterios.forEach(crit => { somaNotas += (cand.notas[crit.id] || 0) * crit.peso; });
+                let media = totalPesos > 0 ? (somaNotas / totalPesos) : 0;
+                let pct = ((media / 10) * 100).toFixed(1);
+                return { ...cand, media, pct };
+            }).sort((a, b) => b.media - a.media);
+
+            podioDiv.innerHTML = classificados.slice(0, 4).map((cand, index) => {
+                let classePos = index === 0 ? 'pos-1' : index === 1 ? 'pos-2' : index === 2 ? 'pos-3' : '';
+                let medalha = index === 0 ? '👑' : index === 1 ? '🥈' : index === 2 ? '🥉' : '⭐';
+                let barWidth = cand.pct > 100 ? 100 : cand.pct;
+
+                return `
+                <div class="podium-item ${classePos}">
+                    <div class="medal">${medalha}</div>
+                    <img src="${cand.foto}" class="cand-thumb" style="width:50px; height:50px; border-radius:8px;">
+                    <div class="rank-info">
+                        <div style="font-weight: 800; text-transform: uppercase; font-size:1.1rem;">${cand.nome}</div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+                            <span style="color:#aaa;">Score: ${cand.media.toFixed(2)}</span>
+                            <span style="color:var(--cyan-neon); font-weight:bold;">${cand.pct}% Win</span>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${barWidth}%;"></div></div>
                     </div>
-                    <div class="notas-grid">
-                        ${htmlNotas}
-                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // --- 7. MINIGAMES ---
+        function triggerVictoryCelebration(name) {
+            document.getElementById('uiWinnerModalName').innerText = name;
+            document.getElementById('victoryModal').style.display = "flex";
+        }
+        function closeVictoryModal() { document.getElementById('victoryModal').style.display = "none"; }
+
+        // --- JOGO DA BOMBA ---
+        function initBombGame() {
+            if(players.length === 0) return alert("Adicione jogadores no menu 'Gerenciar Time'!");
+            changeScreen('screenBomb');
+            startNewBombMatch();
+        }
+
+        function startNewBombMatch() {
+            bombActivePlayers = [...players];
+            bombEliminatedPlayers = [];
+            bombCurrentTurn = 0;
+            generateBombBoard();
+        }
+
+        // Nova função para confirmar a quantidade de bombas inseridas
+        function confirmBombCount() {
+            let bombCount = parseInt(document.getElementById('bombCountInput').value) || 2;
+            if(bombCount < 1) bombCount = 1;
+            if(bombCount > 15) bombCount = 15;
+            document.getElementById('bombCountInput').value = bombCount;
+            
+            generateBombBoard();
+            registerLog("BOMBA", `Quantidade de bombas atualizada para ${bombCount} na partida em andamento.`);
+        }
+
+        function generateBombBoard() {
+            const grid = document.getElementById('uiBombGrid'); 
+            grid.innerHTML = '';
+            
+            let bombCount = parseInt(document.getElementById('bombCountInput').value) || 2;
+            if(bombCount < 1) bombCount = 1;
+            if(bombCount > 15) bombCount = 15;
+
+            let totalTiles = 16;
+            let diamondsCount = totalTiles - bombCount;
+            
+            let deck = Array(diamondsCount).fill('💎').concat(Array(bombCount).fill('💣')).sort(() => Math.random() - 0.5);
+            bombGameTiles = deck;
+
+            deck.forEach((type, idx) => {
+                let tile = document.createElement('div'); 
+                tile.className = 'bomb-tile'; 
+                tile.innerText = idx + 1;
+                tile.onclick = () => {
+                    if(tile.classList.contains('revealed') || bombActivePlayers.length <= 1) return;
+                    
+                    let activePlayer = bombActivePlayers[bombCurrentTurn];
+                    tile.classList.add('revealed');
+
+                    if(type === '💎') {
+                        tile.classList.add('diamond'); 
+                        tile.innerText = '💎';
+                        
+                        let globalPlayer = players.find(p => p.name === activePlayer.name);
+                        if(globalPlayer) globalPlayer.xp += 50;
+                        registerLog("BOMBA", `${activePlayer.name} encontrou um diamante (+50 XP).`);
+                        
+                        bombCurrentTurn = (bombCurrentTurn + 1) % bombActivePlayers.length;
+                        updateBombStatusAndRanks();
+                    } else {
+                        tile.classList.add('exploded'); 
+                        tile.innerText = '💣';
+                        registerLog("BOMBA", `💥 ELIMINAÇÃO! ${activePlayer.name} detonou uma bomba.`);
+                        
+                        document.querySelectorAll('.bomb-tile').forEach((t, i) => { 
+                            t.classList.add('revealed'); 
+                            t.innerText = bombGameTiles[i]; 
+                            if(bombGameTiles[i] === '💣') t.classList.add('exploded');
+                            if(bombGameTiles[i] === '💎') t.classList.add('diamond');
+                        });
+
+                        bombEliminatedPlayers.push(activePlayer);
+                        bombActivePlayers.splice(bombCurrentTurn, 1);
+
+                        if(bombActivePlayers.length === 1) {
+                            let absoluteWinner = bombActivePlayers[0];
+                            let globalPlayer = players.find(p => p.name === absoluteWinner.name);
+                            if(globalPlayer) globalPlayer.xp += 200;
+                            
+                            registerLog("BOMBA", `🏆 CAMPEÃO DA PARTIDA: ${absoluteWinner.name}!`);
+                            triggerVictoryCelebration(absoluteWinner.name);
+                            document.getElementById('bombStatusBar').innerText = `🏆 Vitória Absoluta de ${absoluteWinner.name}!`;
+                            updateBombStatusAndRanks();
+                        } else {
+                            document.getElementById('bombStatusBar').innerText = `💥 ${activePlayer.name} ELIMINADO! Próxima rodada iniciando...`;
+                            
+                            if(bombCurrentTurn >= bombActivePlayers.length) {
+                                bombCurrentTurn = 0;
+                            }
+                            
+                            setTimeout(() => {
+                                generateBombBoard();
+                            }, 2500);
+                        }
+                    }
+                    persistData(); 
+                    renderInterface();
+                };
+                grid.appendChild(tile);
+            });
+
+            updateBombStatusAndRanks();
+        }
+
+        function updateBombStatusAndRanks() {
+            if (bombActivePlayers.length > 1) {
+                document.getElementById('bombStatusBar').innerText = `🎯 Vez de: ${bombActivePlayers[bombCurrentTurn].name}`;
+            }
+            
+            document.getElementById('bombAliveCount').innerText = bombActivePlayers.length;
+            document.getElementById('bombDeadCount').innerText = bombEliminatedPlayers.length;
+
+            document.getElementById('uiBombAliveList').innerHTML = bombActivePlayers.map((p, idx) => `
+                <div style="padding: 6px 12px; background: rgba(0,255,255,0.08); border: 1px solid rgba(0,255,255,0.15); border-radius: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span><i class="fa-solid fa-gamepad" style="color:var(--cyan-neon); margin-right:6px;"></i> <b>${p.name}</b></span>
+                    ${idx === bombCurrentTurn && bombActivePlayers.length > 1 ? '<span style="color:var(--cyan-neon); font-weight:bold; font-size:0.75rem; border:1px solid var(--cyan-neon); padding:2px 6px; border-radius:4px; text-transform:uppercase; background:rgba(0,255,255,0.1);">Sua Vez</span>' : ''}
                 </div>
-            `;
-        });
+            `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem;">Ninguém sobrevivendo.</div>';
 
-        calcularResultados();
-    }
-</script>
+            document.getElementById('uiBombDeadList').innerHTML = [...bombEliminatedPlayers].reverse().map((p, idx) => `
+                <div style="padding: 6px 12px; background: rgba(255,0,85,0.06); border: 1px solid rgba(255,0,85,0.15); border-radius: 8px; font-size: 0.9rem; color: #b0a9c0; display:flex; justify-content:space-between;">
+                    <span>💀 <b>${p.name}</b></span>
+                    <span style="font-size:0.8rem; color:#ff3366; font-style:italic;">Eliminado</span>
+                </div>
+            `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem;">Nenhuma baixa registrada.</div>';
+        }
 
+
+        // --- JOGO DE FUTEBOL (PÊNALTIS) ---
+        function initFootballGame() {
+            if(players.length === 0) return alert("Adicione jogadores no menu 'Gerenciar Time'!");
+            changeScreen('screenFootball');
+            startNewFootballMatch();
+        }
+
+        function startNewFootballMatch() {
+            footballActivePlayers = [...players];
+            footballEliminatedPlayers = [];
+            footballCurrentTurn = 0;
+            resetFootballVisuals();
+        }
+
+        function resetFootballVisuals() {
+            document.getElementById('gkActor').style.left = "calc(50% - 35px)";
+            document.getElementById('ballActor').style.bottom = "15px";
+            document.getElementById('ballActor').style.left = "calc(50% - 20px)";
+            document.getElementById('ballActor').style.transform = "scale(1)";
+            
+            if (footballActivePlayers.length > 1) {
+                document.getElementById('footballStatusBar').innerText = `⚽ Turno de Chute: ${footballActivePlayers[footballCurrentTurn].name}`;
+            }
+            updateFootballStatusAndRanks();
+        }
+
+        function executeKick(playerChoice) {
+            if (footballActivePlayers.length <= 1) return;
+            
+            const activePlayer = footballActivePlayers[footballCurrentTurn];
+            const gkChoice = ['esquerda', 'centro', 'direita'][Math.floor(Math.random() * 3)];
+            
+            const gk = document.getElementById('gkActor');
+            gk.style.left = gkChoice === 'esquerda' ? "15%" : (gkChoice === 'direita' ? "75%" : "calc(50% - 35px)");
+            
+            const ball = document.getElementById('ballActor');
+            ball.style.bottom = "170px"; 
+            ball.style.transform = "scale(0.65) rotate(720deg)";
+            ball.style.left = playerChoice === 'esquerda' ? "18%" : (playerChoice === 'direita' ? "78%" : "calc(50% - 20px)");
+
+            setTimeout(() => {
+                if(playerChoice === gkChoice) {
+                    document.getElementById('footballStatusBar').innerText = `❌ DEFESA! ${activePlayer.name} foi eliminado!`;
+                    registerLog("FUTEBOL", `Goleiro defendeu o chute de ${activePlayer.name}. (Eliminado)`);
+                    
+                    footballEliminatedPlayers.push(activePlayer);
+                    footballActivePlayers.splice(footballCurrentTurn, 1);
+
+                    if(footballActivePlayers.length === 1) {
+                        let absoluteWinner = footballActivePlayers[0];
+                        let globalPlayer = players.find(p => p.name === absoluteWinner.name);
+                        if(globalPlayer) globalPlayer.xp += 200;
+                        
+                        registerLog("FUTEBOL", `🏆 CAMPEÃO DOS PÊNALTIS: ${absoluteWinner.name}!`);
+                        triggerVictoryCelebration(absoluteWinner.name);
+                        document.getElementById('footballStatusBar').innerText = `🏆 Vitória Absoluta de ${absoluteWinner.name}!`;
+                        updateFootballStatusAndRanks();
+                    } else {
+                        if(footballCurrentTurn >= footballActivePlayers.length) {
+                            footballCurrentTurn = 0;
+                        }
+                        setTimeout(() => { resetFootballVisuals(); }, 2500);
+                    }
+                } else {
+                    document.getElementById('footballStatusBar').innerText = `🎉 GOOOOL!!`;
+                    let globalPlayer = players.find(p => p.name === activePlayer.name);
+                    if(globalPlayer) globalPlayer.xp += 100; 
+                    registerLog("FUTEBOL", `⚽ Golaço de ${activePlayer.name} (+100 XP).`);
+                    
+                    footballCurrentTurn = (footballCurrentTurn + 1) % footballActivePlayers.length;
+                    setTimeout(() => { resetFootballVisuals(); }, 2000);
+                }
+                persistData(); 
+                renderInterface();
+            }, 500);
+        }
+
+        function updateFootballStatusAndRanks() {
+            document.getElementById('footballAliveCount').innerText = footballActivePlayers.length;
+            document.getElementById('footballDeadCount').innerText = footballEliminatedPlayers.length;
+
+            document.getElementById('uiFootballAliveList').innerHTML = footballActivePlayers.map((p, idx) => `
+                <div style="padding: 6px 12px; background: rgba(0,255,255,0.08); border: 1px solid rgba(0,255,255,0.15); border-radius: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span><i class="fa-solid fa-gamepad" style="color:var(--cyan-neon); margin-right:6px;"></i> <b>${p.name}</b></span>
+                    ${idx === footballCurrentTurn && footballActivePlayers.length > 1 ? '<span style="color:var(--cyan-neon); font-weight:bold; font-size:0.75rem; border:1px solid var(--cyan-neon); padding:2px 6px; border-radius:4px; text-transform:uppercase; background:rgba(0,255,255,0.1);">Sua Vez</span>' : ''}
+                </div>
+            `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem;">Ninguém sobrevivendo.</div>';
+
+            document.getElementById('uiFootballDeadList').innerHTML = [...footballEliminatedPlayers].reverse().map((p, idx) => `
+                <div style="padding: 6px 12px; background: rgba(255,0,85,0.06); border: 1px solid rgba(255,0,85,0.15); border-radius: 8px; font-size: 0.9rem; color: #b0a9c0; display:flex; justify-content:space-between;">
+                    <span>💀 <b>${p.name}</b></span>
+                    <span style="font-size:0.8rem; color:#ff3366; font-style:italic;">Eliminado</span>
+                </div>
+            `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem;">Nenhuma baixa registrada.</div>';
+        }
+
+
+        // --- SORTEIO (ROLETA) ---
+        function triggerRaffle() {
+            if(players.length === 0) return alert("Adicione jogadores para o sorteio!");
+            if(isRaffleRolling) return;
+            isRaffleRolling = true;
+            
+            // Ativa o som sintetizado de início da roleta
+            playRaffleSound();
+
+            const display = document.getElementById('uiRaffleDisplay');
+            display.classList.add('rolling');
+            
+            let counter = 0;
+            let interval = setInterval(() => {
+                display.innerText = `🎲 ${players[Math.floor(Math.random() * players.length)].name} 🎲`;
+                counter++;
+                if(counter > 20) {
+                    clearInterval(interval); display.classList.remove('rolling'); isRaffleRolling = false;
+                    let winner = players[Math.floor(Math.random() * players.length)];
+                    display.innerText = `👑 ${winner.name} 👑`;
+                    registerLog("SORTEIO", `🎉 ${winner.name} ganhou o sorteio!`);
+                    triggerVictoryCelebration(winner.name);
+                }
+            }, 100);
+        }
+
+        function exportToCSV() {
+            if(systemLogs.length === 0) return alert("Não há dados para exportar.");
+            let csvContent = "\ufeffData;Hora;Modulo;Ação\n" + systemLogs.map(l => `${l.date};${l.time};${l.tag};${l.msg}`).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "scrox_gamer_space_relatorio_completo.csv";
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        renderInterface();
+    </script>
 </body>
 </html>
