@@ -169,6 +169,7 @@
         .podium-item.pos-1 { border-color: #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.15); }
         .podium-item.pos-2 { border-color: #c0c0c0; }
         .podium-item.pos-3 { border-color: #cd7f32; }
+        .podium-item.eliminated { border-color: #ff3366; opacity: 0.75; }
         .medal { font-size: 28px; min-width: 40px; text-align: center; }
         .rank-info { flex-grow: 1; }
         .progress-bar-bg {
@@ -179,13 +180,13 @@
             transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--cyan-neon); border-radius: 5px;
         }
 
-        /* --- JOGOS (BOMBA & FUTEBOL & SORTEIO) --- */
+        /* --- JOGOS (BOMBA, FUTEBOL, SORTEIO & PORTA) --- */
         .game-status-bar {
             background: rgba(138, 43, 226, 0.15); border: 1px solid var(--purple-galactic); border-radius: 12px;
             padding: 12px; text-align: center; font-size: 1.2rem; font-weight: 700; margin-bottom: 25px; color: var(--cyan-neon);
         }
         
-        /* ANIMAÇÃO FLUTUANTE DAS CARTAS DA BOMBA */
+        /* ANIMAÇÃO BOMBA */
         @keyframes subtleFloat {
             0% { transform: translateY(0) scale(1); filter: brightness(1); box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
             50% { transform: translateY(-4px) scale(1.02); filter: brightness(1.15); border-color: var(--pink-neon); box-shadow: 0 10px 20px rgba(255, 0, 204, 0.2); }
@@ -201,7 +202,6 @@
             animation: subtleFloat 4s ease-in-out infinite;
         }
         .bomb-tile:hover { transform: scale(1.06) translateY(-2px) !important; border-color: var(--cyan-neon); color: #fff; animation-play-state: paused; }
-        
         .bomb-tile.revealed { background: #0f0a1c; border-color: rgba(255,255,255,0.1); cursor: not-allowed; transform: none !important; animation: none !important; }
         .bomb-tile.diamond { background: linear-gradient(145deg, #00f0ff, #0077b6); border-color: var(--cyan-neon); text-shadow: 0 0 10px #fff; font-size: 2.2rem; }
         .bomb-tile.exploded { background: linear-gradient(145deg, #ff0055, #9b0026); border-color: #ff3366; font-size: 2.2rem; animation: explosionShake 0.4s linear !important; }
@@ -225,6 +225,20 @@
         .raffle-box { background: rgba(0,0,0,0.3); border: 2px dashed var(--cyan-neon); border-radius: 20px; padding: 40px; text-align: center; max-width: 500px; margin: 0 auto; width: 100%; }
         .raffle-display { font-size: 2.5rem; font-weight: 900; margin: 30px 0; min-height: 70px; color: #fff; text-shadow: 0 0 15px var(--cyan-neon); }
         .raffle-display.rolling { opacity: 0.7; color: var(--pink-neon); }
+
+        /* --- JOGO DA PORTA (NOVO) --- */
+        .door-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 15px; max-width: 700px; margin: 0 auto; }
+        .door-tile {
+            background: linear-gradient(145deg, #3a2200, #1a0f00); height: 140px; border-radius: 8px; border: 3px solid #8b5a2b;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: 800; color: rgba(255, 255, 255, 0.8); cursor: pointer; transition: all 0.5s; box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.4); position: relative;
+        }
+        .door-tile:hover { filter: brightness(1.2); }
+        .door-tile.assigned { border-color: var(--cyan-neon); box-shadow: 0 0 15px rgba(0,255,255,0.5); }
+        .door-tile .player-name { font-size: 0.8rem; position: absolute; bottom: 10px; color: #fff; font-weight: 800; background: rgba(0,0,0,0.8); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--cyan-neon); white-space: nowrap; max-width: 90%; overflow: hidden; text-overflow: ellipsis; }
+        .door-tile.open-angel { background: linear-gradient(145deg, #ffffff, #87ceeb); border-color: #00ffff; box-shadow: 0 0 30px #00ffff; transform: scale(1.05) rotateY(180deg); }
+        .door-tile.open-devil { background: linear-gradient(145deg, #ff0000, #4d0000); border-color: #ff3366; box-shadow: 0 0 30px #ff0000; transform: scale(1.05) rotateY(180deg); animation: explosionShake 0.4s linear; }
+        .door-number { position: absolute; top: 10px; left: 10px; font-size: 1rem; color: #dcb072; font-weight: bold; background: rgba(0,0,0,0.5); border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border: 1px solid #dcb072; }
+
 
         /* --- DASHBOARD TABLES & LOGS --- */
         .rank-table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden; }
@@ -306,6 +320,12 @@
                     <h3>Jogo da Bomba</h3>
                     <p>Encontre os diamantes reluzentes para somar XP.</p>
                 </div>
+                <!-- NOVO: CARD JOGO DA PORTA -->
+                <div class="game-card" onclick="initDoorsGame()">
+                    <i class="fa-solid fa-door-open" style="background: linear-gradient(135deg, #ffcc00, #ff6600); -webkit-background-clip: text;"></i>
+                    <h3>Jogo da Porta</h3>
+                    <p>Escolha a porta. Anjos te salvam, demônios te eliminam!</p>
+                </div>
                 <div class="game-card" onclick="initFootballGame()">
                     <i class="fa-solid fa-futbol"></i>
                     <h3>Pênaltis Neon</h3>
@@ -316,7 +336,6 @@
                     <h3>Sorteio Rápido</h3>
                     <p>Sorteie aleatoriamente prêmios entre o time de jogos.</p>
                 </div>
-                <!-- NOVO CARD: ACERTE O PREÇO NEON -->
                 <div class="game-card" onclick="initPriceGame()">
                     <i class="fa-solid fa-tags" style="background: linear-gradient(135deg, var(--lime-neon), var(--pink-neon)); -webkit-background-clip: text;"></i>
                     <h3>Acerte o Preço</h3>
@@ -423,6 +442,45 @@
             </div>
         </div>
 
+        <!-- NOVO: TELA 9 - JOGO DA PORTA -->
+        <div class="screen" id="screenDoors">
+            <div class="screen-header">
+                <h2 class="screen-title"><i class="fa-solid fa-door-open"></i> Jogo da Porta</h2>
+                <div>
+                    <button class="btn btn-success" onclick="startDoorsRound()" style="margin-right: 10px;"><i class="fa-solid fa-play"></i> Nova Rodada</button>
+                    <button class="btn btn-secondary" onclick="changeScreen('screenMenu')"><i class="fa-solid fa-chevron-left"></i> Menu</button>
+                </div>
+            </div>
+
+            <div class="input-group" style="max-width: 600px; margin: 0 auto 20px auto; display: flex; justify-content: center; align-items: center; gap: 15px;">
+                <span style="font-weight: 600; color: var(--cyan-neon);">Total de Portas:</span>
+                <input type="number" id="doorCountInput" min="2" max="30" value="6" style="max-width: 80px; text-align: center;">
+                <span style="font-weight: 600; color: var(--lime-neon);">Portas Salvas (Anjos):</span>
+                <input type="number" id="safeDoorCountInput" min="1" max="29" value="2" style="max-width: 80px; text-align: center;">
+            </div>
+
+            <div class="game-status-bar" id="doorsStatusBar">Aguardando início...</div>
+            
+            <div class="door-grid" id="uiDoorsGrid" style="margin-bottom: 25px;"></div>
+
+            <div id="doorsActionBtnContainer" style="text-align: center; margin-bottom: 35px; display: none;">
+                <button class="btn btn-danger" style="font-size: 1.5rem; padding: 15px 40px; box-shadow: 0 0 20px red;" onclick="openSelectedDoors()">
+                    <i class="fa-solid fa-unlock-keyhole"></i> ABRIR PORTAS
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; max-width: 950px; margin: 0 auto; width: 100%;">
+                <div class="list-box" style="border-top: 4px solid var(--cyan-neon); background: rgba(7, 5, 15, 0.6);">
+                    <h4 style="color: var(--cyan-neon); margin-bottom: 15px;"><i class="fa-solid fa-heart"></i> Vivos (<span id="doorsAliveCount">0</span>)</h4>
+                    <div id="uiDoorsAliveList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+                <div class="list-box" style="border-top: 4px solid var(--pink-neon); background: rgba(7, 5, 15, 0.6);">
+                    <h4 style="color: var(--pink-neon); margin-bottom: 15px;"><i class="fa-solid fa-skull"></i> Eliminados (<span id="doorsDeadCount">0</span>)</h4>
+                    <div id="uiDoorsDeadList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- TELA 5: FUTEBOL -->
         <div class="screen" id="screenFootball">
             <div class="screen-header">
@@ -473,7 +531,7 @@
             </div>
         </div>
 
-        <!-- NOVO: TELA 8 - ACERTE O PREÇO -->
+        <!-- TELA 8 - ACERTE O PREÇO -->
         <div class="screen" id="screenPriceRight">
             <div class="screen-header">
                 <h2 class="screen-title"><i class="fa-solid fa-tags"></i> Acerte o Preço (IMVU)</h2>
@@ -482,7 +540,7 @@
             
             <div class="split-layout" style="margin-bottom: 25px;">
                 <!-- ABA 1: CADASTRAR PRODUTO -->
-                <div class="list-box" style="border-top: 3px solid var(--purple-galactic);">
+                <div class="list-box" style="border-top: 3px solid var(--purple-galactic); display: flex; flex-direction: column;">
                     <h3 style="margin-bottom: 15px; color: var(--purple-galactic); font-weight: 800;"><i class="fa-solid fa-plus-circle"></i> 1. Cadastrar Produto</h3>
                     <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 12px;">
                         <input type="text" id="regProdName" placeholder="Nome do Produto/Item...">
@@ -496,16 +554,20 @@
                     <div style="margin-top: 15px; font-size: 0.9rem; color: #b0a9c0; text-align: center;">
                         Itens Cadastrados Atualmente: <span id="regProdCount" style="color: var(--cyan-neon); font-weight: bold; font-size: 1.2rem;">0</span>
                     </div>
+                    <!-- NOVO: LISTA DE PRODUTOS CADASTRADOS PARA SELEÇÃO/EXCLUSÃO -->
+                    <div id="uiPriceProductList" class="scroll-list" style="margin-top: 15px; flex-grow: 1; max-height: 250px;"></div>
+                    <button class="btn btn-danger" onclick="deleteAllPriceProducts()" style="width: 100%; margin-top: 10px; padding: 10px;"><i class="fa-solid fa-trash"></i> Excluir Todos</button>
                 </div>
 
                 <!-- ABA 2: SORTEAR E PREVIEW -->
                 <div class="list-box" style="border-top: 3px solid var(--cyan-neon); display: flex; flex-direction: column;">
-                    <h3 style="margin-bottom: 15px; color: var(--cyan-neon); font-weight: 800;"><i class="fa-solid fa-box-open"></i> 2. Sortear Produto para a Rodada</h3>
+                    <h3 style="margin-bottom: 15px; color: var(--cyan-neon); font-weight: 800;"><i class="fa-solid fa-box-open"></i> 2. Definir Produto para a Rodada</h3>
                     <button class="btn btn-success" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-bottom: 15px;" onclick="drawPriceProduct()">
-                        <i class="fa-solid fa-dice"></i> SORTEAR AGORA
+                        <i class="fa-solid fa-dice"></i> SORTEAR ALEATORIAMENTE
                     </button>
+                    <p style="text-align: center; color: #7f7593; font-size: 0.85rem; margin-bottom: 10px;">Ou selecione manualmente na lista ao lado.</p>
                     
-                    <!-- Preview Dinâmico do Produto Sorteado -->
+                    <!-- Preview Dinâmico do Produto -->
                     <div id="priceProductPreviewContainer" class="price-product-showcase" style="display: none; flex-grow: 1;">
                         <h3 style="color: var(--pink-neon); font-size: 1.6rem; font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 15px rgba(255,0,204,0.6); text-transform: uppercase; z-index: 1; text-align: center;">
                             <i class="fa-solid fa-circle-question"></i> Qual o valor desse produto?
@@ -520,7 +582,7 @@
             <div class="list-box" style="border-top: 3px solid var(--pink-neon);">
                 <h3 style="margin-bottom: 15px; color: var(--pink-neon); font-weight: 800;"><i class="fa-solid fa-keyboard"></i> 3. Registrar Palpites dos Jogadores</h3>
                 <div id="uiPricePlayersForm" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 5px;">
-                    <p style="color: #7f7593; font-style: italic;">Sorteie um produto acima para iniciar a rodada e liberar os palpites.</p>
+                    <p style="color: #7f7593; font-style: italic;">Defina um produto acima para iniciar a rodada e liberar os palpites.</p>
                 </div>
                 <button class="btn btn-danger" id="btnCalculatePriceGame" style="width: 100%; margin-top: 20px; display: none; padding: 15px; font-size: 1.1rem;" onclick="calculatePriceResults()">
                     <i class="fa-solid fa-square-poll-vertical"></i> Calcular & Exibir Ranking Final
@@ -534,7 +596,7 @@
                     <div id="uiPriceWinnerBillboard" style="font-size: 1.3rem; font-weight: bold; margin-top: 12px; color: #fff; line-height: 1.5; padding: 15px; background: rgba(204,255,0,0.05); border-radius: 10px; border: 1px solid rgba(204,255,0,0.15);"></div>
                 </div>
                 
-                <h4 style="color: var(--cyan-neon); margin-bottom: 15px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;"><i class="fa-solid fa-chart-bar"></i> Ranking Interno de Proximidade</h4>
+                <h4 style="color: var(--cyan-neon); margin-bottom: 15px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;"><i class="fa-solid fa-chart-bar"></i> Ranking Interno da Rodada</h4>
                 <div id="uiPriceRankBarsContainer" class="podium"></div>
             </div>
         </div>
@@ -578,16 +640,16 @@
         <div class="nav-footer">
             <button class="btn btn-secondary" onclick="changeScreen('screenMenu')"><i class="fa-solid fa-house"></i> Início</button>
             <button class="btn btn-secondary" onclick="changeScreen('screenPlayers')"><i class="fa-solid fa-users"></i> Time</button>
-            <button class="btn btn-secondary" onclick="changeScreen('screenAvaliacao')"><i class="fa-solid fa-gavel"></i> Avaliações</button>
             <button class="btn btn-secondary" onclick="initBombGame()"><i class="fa-solid fa-bomb"></i> Bomba</button>
+            <button class="btn btn-secondary" onclick="initDoorsGame()"><i class="fa-solid fa-door-open"></i> Porta</button>
             <button class="btn btn-secondary" onclick="initFootballGame()"><i class="fa-solid fa-futbol"></i> Futebol</button>
             <button class="btn btn-secondary" onclick="initPriceGame()"><i class="fa-solid fa-tags"></i> Preço</button>
-            <button class="btn btn-secondary" onclick="changeScreen('screenDashboard')"><i class="fa-solid fa-chart-simple"></i> Dashboard</button>
+            <button class="btn btn-secondary" onclick="changeScreen('screenDashboard')"><i class="fa-solid fa-chart-simple"></i> Dash</button>
         </div>
 
     </div>
 
-    <!-- MODAL CELEBRATIVO (AGORA COM TROFÉU E CONFETES) -->
+    <!-- MODAL CELEBRATIVO -->
     <div class="celebration-overlay" id="victoryModal">
         <div class="celebration-modal">
             <div class="giant-trophy">🏆</div>
@@ -614,7 +676,13 @@
         let footballEliminatedPlayers = [];
         let footballCurrentTurn = 0;
 
-        // NOVO: Persistência para o Jogo de Preços
+        // Jogo da Porta (Novo)
+        let doorsActivePlayers = [];
+        let doorsEliminatedPlayers = [];
+        let doorsCurrentTurn = 0;
+        let doorsData = []; // { type: 'angel' ou 'devil', assignedTo: null }
+
+        // Persistência Jogo de Preços
         let registeredPriceProducts = JSON.parse(localStorage.getItem('scrox_price_products_unified')) || [];
         let priceGameCurrentProduct = { name: '', value: 0, image: '' };
 
@@ -622,7 +690,7 @@
         let candidatos = JSON.parse(localStorage.getItem('scrox_candidatos_unified')) || [];
 
         // --- 2. BACKGROUND ANIMATION ---
-        const emojisList = ['🎮', '👾', '🚀', '⚽', '💎', '💣', '🏆', '🔥', '🕹️', '🎯', '💯', '🏷️', '💰'];
+        const emojisList = ['🎮', '👾', '🚀', '⚽', '💎', '💣', '🏆', '🔥', '🕹️', '🎯', '💯', '🏷️', '💰', '👼', '🚪'];
         const spaceBg = document.getElementById('spaceBg');
         for (let i = 0; i < 25; i++) {
             let el = document.createElement('div');
@@ -634,66 +702,35 @@
             spaceBg.appendChild(el);
         }
 
-        // --- INTEGRAÇÃO DE SINAIS DE ÁUDIO SINTETIZADOS NATIVOS (WEB AUDIO API) ---
-        function playRaffleSound() {
+        // --- ÁUDIOS SINTETIZADOS NATIVOS (WEB AUDIO API) ---
+        function playSoundWithOsc(type, freqStart, freqEnd, duration, vol) {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const now = ctx.currentTime;
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(220, now);
-                osc.frequency.exponentialRampToValueAtTime(880, now + 0.4);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.linearRampToValueAtTime(0.001, now + 0.4);
+                osc.type = type;
+                osc.frequency.setValueAtTime(freqStart, now);
+                if(freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, now + duration);
+                gain.gain.setValueAtTime(vol, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
                 osc.connect(gain); gain.connect(ctx.destination);
-                osc.start(now); osc.stop(now + 0.4);
+                osc.start(now); osc.stop(now + duration);
             } catch (e) {}
         }
 
-        function playDiamondSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const now = ctx.currentTime;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, now);
-                osc.frequency.setValueAtTime(880, now + 0.08);
-                gain.gain.setValueAtTime(0.15, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.start(now); osc.stop(now + 0.35);
-            } catch (e) {}
-        }
-
-        function playExplosionSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const now = ctx.currentTime;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(160, now);
-                osc.frequency.linearRampToValueAtTime(30, now + 0.5);
-                gain.gain.setValueAtTime(0.35, now);
-                gain.gain.linearRampToValueAtTime(0.001, now + 0.5);
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.start(now); osc.stop(now + 0.5);
-            } catch (e) {}
-        }
+        function playRaffleSound() { playSoundWithOsc('triangle', 220, 880, 0.4, 0.2); }
+        function playDiamondSound() { playSoundWithOsc('sine', 587.33, 880, 0.35, 0.15); }
+        function playExplosionSound() { playSoundWithOsc('sawtooth', 160, 30, 0.5, 0.35); }
 
         function playGoalSound() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const now = ctx.currentTime;
                 [440, 554, 659, 880].forEach((f, i) => {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = 'triangle';
-                    osc.frequency.value = f;
-                    gain.gain.setValueAtTime(0.12, now + i * 0.08);
-                    gain.gain.linearRampToValueAtTime(0.001, now + i * 0.08 + 0.25);
+                    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                    osc.type = 'triangle'; osc.frequency.value = f;
+                    gain.gain.setValueAtTime(0.12, now + i * 0.08); gain.gain.linearRampToValueAtTime(0.001, now + i * 0.08 + 0.25);
                     osc.connect(gain); gain.connect(ctx.destination);
                     osc.start(now + i * 0.08); osc.stop(now + i * 0.08 + 0.25);
                 });
@@ -705,38 +742,54 @@
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const now = ctx.currentTime;
                 [1100, 1100].forEach((f, i) => {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(f, now + i * 0.15);
-                    osc.frequency.linearRampToValueAtTime(f + 50, now + i * 0.15 + 0.1);
-                    gain.gain.setValueAtTime(0.18, now + i * 0.15);
-                    gain.gain.linearRampToValueAtTime(0.001, now + i * 0.15 + 0.12);
+                    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.15); osc.frequency.linearRampToValueAtTime(f + 50, now + i * 0.15 + 0.1);
+                    gain.gain.setValueAtTime(0.18, now + i * 0.15); gain.gain.linearRampToValueAtTime(0.001, now + i * 0.15 + 0.12);
                     osc.connect(gain); gain.connect(ctx.destination);
                     osc.start(now + i * 0.15); osc.stop(now + i * 0.15 + 0.12);
                 });
             } catch (e) {}
         }
 
-        // NOVO: SOM SATISFATÓRIO DE VITÓRIA / FANFARRA
         function playVictorySound() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const now = ctx.currentTime;
-                // Notas: C5, E5, G5, C6 (Acorde Maior Arpejado subindo)
                 const notes = [523.25, 659.25, 783.99, 1046.50];
                 notes.forEach((freq, index) => {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = 'triangle';
-                    osc.frequency.value = freq;
-                    gain.gain.setValueAtTime(0, now + index * 0.15);
-                    gain.gain.linearRampToValueAtTime(0.2, now + index * 0.15 + 0.05);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.15 + 0.7);
+                    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                    osc.type = 'triangle'; osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0, now + index * 0.15); gain.gain.linearRampToValueAtTime(0.2, now + index * 0.15 + 0.05); gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.15 + 0.7);
                     osc.connect(gain); gain.connect(ctx.destination);
-                    osc.start(now + index * 0.15);
-                    osc.stop(now + index * 0.15 + 0.7);
+                    osc.start(now + index * 0.15); osc.stop(now + index * 0.15 + 0.7);
                 });
+            } catch (e) {}
+        }
+
+        // Novos Audios Jogo da Porta
+        function playAngelSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = ctx.currentTime;
+                [880, 1108, 1318, 1760].forEach((f, i) => {
+                    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                    osc.type = 'sine'; osc.frequency.value = f;
+                    gain.gain.setValueAtTime(0, now + i * 0.08); gain.gain.linearRampToValueAtTime(0.15, now + i * 0.08 + 0.05); gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.8);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now + i * 0.08); osc.stop(now + i * 0.08 + 0.8);
+                });
+            } catch (e) {}
+        }
+
+        function playDevilSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(70, now); osc.frequency.linearRampToValueAtTime(40, now + 0.8);
+                gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(now); osc.stop(now + 0.8);
             } catch (e) {}
         }
 
@@ -769,6 +822,7 @@
                 players = []; systemLogs = []; criterios = []; candidatos = []; currentTurnIndex = 0;
                 bombActivePlayers = []; bombEliminatedPlayers = []; bombCurrentTurn = 0;
                 footballActivePlayers = []; footballEliminatedPlayers = []; footballCurrentTurn = 0;
+                doorsActivePlayers = []; doorsEliminatedPlayers = []; doorsCurrentTurn = 0;
                 registeredPriceProducts = []; priceGameCurrentProduct = { name: '', value: 0, image: '' };
                 registerLog("SISTEMA", "Painel resetado para o padrão de fábrica.");
                 renderInterface();
@@ -799,8 +853,7 @@
             const peso = parseFloat(document.getElementById('critPeso').value) || 1;
             if(!nome) return alert('Digite o nome do critério!');
             criterios.push({ id: Date.now().toString(), nome, peso });
-            document.getElementById('critNome').value = '';
-            document.getElementById('critPeso').value = '1';
+            document.getElementById('critNome').value = ''; document.getElementById('critPeso').value = '1';
             registerLog("AVALIAÇÃO", `Critério '${nome}' adicionado (Peso: ${peso}).`);
             persistData(); renderInterface();
         }
@@ -810,7 +863,6 @@
             persistData(); renderInterface();
         }
 
-        // --- 6. CADASTRO DE CANDIDATOS ---
         function addCandidato() {
             const nome = document.getElementById('candNome').value.trim();
             const fotoIn = document.getElementById('candFoto');
@@ -826,22 +878,14 @@
             };
             reader.readAsDataURL(fotoIn.files[0]);
         }
-        function removerCandidato(id) {
-            candidatos = candidatos.filter(c => c.id !== id);
-            persistData(); renderInterface();
-        }
+        function removerCandidato(id) { candidatos = candidatos.filter(c => c.id !== id); persistData(); renderInterface(); }
         function atualizarNota(candId, critId, nota) {
             const cand = candidatos.find(c => c.id === candId);
-            if(cand) {
-                cand.notas[critId] = parseFloat(nota) || 0;
-                persistData();
-                renderPodium();
-            }
+            if(cand) { cand.notas[critId] = parseFloat(nota) || 0; persistData(); renderPodium(); }
         }
         function resetConcurso() {
-            if(confirm("Deseja apagar apenas os dados de avaliação (Critérios e Candidatos)?")) {
-                criterios = []; candidatos = [];
-                registerLog("AVALIAÇÃO", "Painel de Concursos foi resetado.");
+            if(confirm("Deseja apagar apenas os dados de avaliação?")) {
+                criterios = []; candidatos = []; registerLog("AVALIAÇÃO", "Painel de Concursos foi resetado.");
                 persistData(); renderInterface();
             }
         }
@@ -880,16 +924,13 @@
                 } else {
                     quadro.innerHTML = candidatos.map(cand => {
                         let htmlNotas = criterios.length === 0 
-                            ? '<p style="color: #ff3366; font-size: 13px;">⚠ Cadastre critérios para dar nota.</p>' 
+                            ? '<p style="color: #ff3366; font-size: 13px;">⚠ Cadastre critérios.</p>' 
                             : criterios.map(crit => `
-                                <div>
-                                    <label>${crit.nome}</label>
-                                    <input type="number" min="0" max="10" step="0.5" placeholder="0-10" 
-                                        value="${cand.notas[crit.id] !== undefined ? cand.notas[crit.id] : ''}" 
-                                        oninput="atualizarNota('${cand.id}', '${crit.id}', this.value)">
-                                </div>
+                                <div><label>${crit.nome}</label>
+                                <input type="number" min="0" max="10" step="0.5" placeholder="0-10" 
+                                    value="${cand.notas[crit.id] !== undefined ? cand.notas[crit.id] : ''}" 
+                                    oninput="atualizarNota('${cand.id}', '${crit.id}', this.value)"></div>
                             `).join('');
-
                         return `
                         <div class="candidato-card">
                             <div class="cand-info">
@@ -905,27 +946,24 @@
             const sortedPlayers = [...players].sort((a,b) => b.xp - a.xp);
             document.getElementById('uiRankTableBody').innerHTML = sortedPlayers.map((p, idx) => {
                 let medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}º`;
-                return `<tr>
-                    <td style="font-weight:bold; color:var(--pink-neon);">${medal}</td>
-                    <td><b>${p.name}</b></td>
-                    <td style="color:var(--cyan-neon); font-weight:bold;">${p.xp} XP</td>
-                </tr>`;
+                return `<tr><td style="font-weight:bold; color:var(--pink-neon);">${medal}</td><td><b>${p.name}</b></td><td style="color:var(--cyan-neon); font-weight:bold;">${p.xp} XP</td></tr>`;
             }).join('') || `<tr><td colspan="3" style="text-align:center; color:#7f7593;">Sem registros.</td></tr>`;
 
             const terminal = document.getElementById('uiLogTerminal');
-            terminal.innerHTML = systemLogs.map(l => `
-                <div class="log-line"><span class="time">[${l.time}]</span><span class="tag">[${l.tag}]</span> ${l.msg}</div>
-            `).join('');
+            terminal.innerHTML = systemLogs.map(l => `<div class="log-line"><span class="time">[${l.time}]</span><span class="tag">[${l.tag}]</span> ${l.msg}</div>`).join('');
             terminal.scrollTop = terminal.scrollHeight;
 
             renderPodium();
+            if(document.getElementById('screenPriceRight').classList.contains('active')) {
+                renderPriceProductsList();
+            }
         }
 
         function renderPodium() {
             const podioDiv = document.getElementById('uiDashboardPodio');
             if(!podioDiv) return;
             if(candidatos.length === 0 || criterios.length === 0) {
-                podioDiv.innerHTML = '<p style="color: #7f7593; font-style: italic;">Aguardando candidatos e critérios...</p>';
+                podioDiv.innerHTML = '<p style="color: #7f7593; font-style: italic;">Aguardando candidatos...</p>';
                 return;
             }
 
@@ -961,235 +999,281 @@
 
         // --- 7. CELEBRAÇÃO ÉPICA ---
         function spawnConfetti() {
-            const container = document.getElementById('globalConfetti');
-            container.style.display = 'block';
-            container.innerHTML = '';
+            const container = document.getElementById('globalConfetti'); container.style.display = 'block'; container.innerHTML = '';
             const colors = ['#ff00cc', '#00ffff', '#ccff00', '#8a2be2', '#ffffff'];
             for(let i=0; i < 70; i++) {
-                let conf = document.createElement('div');
-                conf.className = 'confetti';
-                conf.style.left = Math.random() * 100 + 'vw';
-                conf.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
-                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                container.appendChild(conf);
+                let conf = document.createElement('div'); conf.className = 'confetti'; conf.style.left = Math.random() * 100 + 'vw'; conf.style.animationDuration = (Math.random() * 2 + 1.5) + 's'; conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; container.appendChild(conf);
             }
         }
 
         function triggerVictoryCelebration(name) {
-            document.getElementById('uiWinnerModalName').innerText = name;
-            document.getElementById('victoryModal').style.display = "flex";
-            playVictorySound();
-            spawnConfetti();
+            document.getElementById('uiWinnerModalName').innerText = name; document.getElementById('victoryModal').style.display = "flex";
+            playVictorySound(); spawnConfetti();
         }
 
         function closeVictoryModal() { 
-            document.getElementById('victoryModal').style.display = "none"; 
-            document.getElementById('globalConfetti').style.display = "none";
-            document.getElementById('globalConfetti').innerHTML = "";
+            document.getElementById('victoryModal').style.display = "none"; document.getElementById('globalConfetti').style.display = "none"; document.getElementById('globalConfetti').innerHTML = "";
         }
 
         // --- JOGO DA BOMBA ---
         function initBombGame() {
             if(players.length === 0) return alert("Adicione jogadores no menu 'Gerenciar Time'!");
-            changeScreen('screenBomb');
-            startNewBombMatch();
+            changeScreen('screenBomb'); startNewBombMatch();
         }
 
         function startNewBombMatch() {
-            bombActivePlayers = [...players];
-            bombEliminatedPlayers = [];
-            bombCurrentTurn = 0;
-            generateBombBoard();
+            bombActivePlayers = [...players]; bombEliminatedPlayers = []; bombCurrentTurn = 0; generateBombBoard();
         }
 
         function confirmBombCount() {
             let bombCount = parseInt(document.getElementById('bombCountInput').value) || 2;
-            if(bombCount < 1) bombCount = 1;
-            if(bombCount > 15) bombCount = 15;
+            if(bombCount < 1) bombCount = 1; if(bombCount > 15) bombCount = 15;
             document.getElementById('bombCountInput').value = bombCount;
-            
-            generateBombBoard();
-            registerLog("BOMBA", `Quantidade de bombas atualizada para ${bombCount} na partida em andamento.`);
+            generateBombBoard(); registerLog("BOMBA", `Quantidade de bombas atualizada para ${bombCount}.`);
         }
 
         function generateBombBoard() {
-            const grid = document.getElementById('uiBombGrid'); 
-            grid.innerHTML = '';
-            
+            const grid = document.getElementById('uiBombGrid'); grid.innerHTML = '';
             let bombCount = parseInt(document.getElementById('bombCountInput').value) || 2;
-            if(bombCount < 1) bombCount = 1;
-            if(bombCount > 15) bombCount = 15;
-
-            let totalTiles = 16;
-            let diamondsCount = totalTiles - bombCount;
-            
+            let totalTiles = 16; let diamondsCount = totalTiles - bombCount;
             let deck = Array(diamondsCount).fill('💎').concat(Array(bombCount).fill('💣')).sort(() => Math.random() - 0.5);
             bombGameTiles = deck;
 
             deck.forEach((type, idx) => {
-                let tile = document.createElement('div'); 
-                tile.className = 'bomb-tile'; 
-                tile.innerText = idx + 1;
+                let tile = document.createElement('div'); tile.className = 'bomb-tile'; tile.innerText = idx + 1;
                 tile.onclick = () => {
                     if(tile.classList.contains('revealed') || bombActivePlayers.length <= 1) return;
-                    
-                    let activePlayer = bombActivePlayers[bombCurrentTurn];
-                    tile.classList.add('revealed');
-
+                    let activePlayer = bombActivePlayers[bombCurrentTurn]; tile.classList.add('revealed');
                     if(type === '💎') {
-                        tile.classList.add('diamond'); 
-                        tile.innerText = '💎';
-                        playDiamondSound();
-                        
-                        let globalPlayer = players.find(p => p.name === activePlayer.name);
-                        if(globalPlayer) globalPlayer.xp += 50;
-                        registerLog("BOMBA", `${activePlayer.name} encontrou um diamante (+50 XP).`);
-                        
+                        tile.classList.add('diamond'); tile.innerText = '💎'; playDiamondSound();
+                        let globalPlayer = players.find(p => p.name === activePlayer.name); if(globalPlayer) globalPlayer.xp += 50;
                         bombCurrentTurn = (bombCurrentTurn + 1) % bombActivePlayers.length;
-                        updateBombStatusAndRanks();
                     } else {
-                        tile.classList.add('exploded'); 
-                        tile.innerText = '💣';
-                        playExplosionSound();
-                        
-                        registerLog("BOMBA", `💥 EXPLOSÃO! ${activePlayer.name} detonou uma bomba.`);
-                        
-                        bombEliminatedPlayers.push(activePlayer);
-                        bombActivePlayers.splice(bombCurrentTurn, 1);
-
+                        tile.classList.add('exploded'); tile.innerText = '💣'; playExplosionSound();
+                        bombEliminatedPlayers.push(activePlayer); bombActivePlayers.splice(bombCurrentTurn, 1);
                         if(bombActivePlayers.length === 1) {
                             let absoluteWinner = bombActivePlayers[0];
-                            let globalPlayer = players.find(p => p.name === absoluteWinner.name);
-                            if(globalPlayer) globalPlayer.xp += 200;
-                            
-                            registerLog("BOMBA", `🏆 CAMPEÃO DA PARTIDA: ${absoluteWinner.name}!`);
+                            let globalPlayer = players.find(p => p.name === absoluteWinner.name); if(globalPlayer) globalPlayer.xp += 200;
                             triggerVictoryCelebration(absoluteWinner.name);
-                            document.getElementById('bombStatusBar').innerText = `🏆 Vitória Absoluta de ${absoluteWinner.name}!`;
-                            
                             document.querySelectorAll('.bomb-tile').forEach((t, i) => { 
-                                t.classList.add('revealed'); 
-                                t.innerText = bombGameTiles[i]; 
-                                if(bombGameTiles[i] === '💣') t.classList.add('exploded');
-                                if(bombGameTiles[i] === '💎') t.classList.add('diamond');
+                                t.classList.add('revealed'); t.innerText = bombGameTiles[i]; 
+                                if(bombGameTiles[i] === '💣') t.classList.add('exploded'); if(bombGameTiles[i] === '💎') t.classList.add('diamond');
                             });
-                            updateBombStatusAndRanks();
-                        } else {
-                            document.getElementById('bombStatusBar').innerText = `💥 ${activePlayer.name} ELIMINADO! O jogo continua...`;
-                            if(bombCurrentTurn >= bombActivePlayers.length) {
-                                bombCurrentTurn = 0;
-                            }
-                            updateBombStatusAndRanks();
-                        }
+                        } else { if(bombCurrentTurn >= bombActivePlayers.length) bombCurrentTurn = 0; }
                     }
-                    persistData(); 
-                    renderInterface();
+                    persistData(); renderInterface(); updateBombStatusAndRanks();
                 };
                 grid.appendChild(tile);
             });
-
             updateBombStatusAndRanks();
         }
 
         function updateBombStatusAndRanks() {
-            if (bombActivePlayers.length > 1) {
-                document.getElementById('bombStatusBar').innerText = `🎯 Vez de: ${bombActivePlayers[bombCurrentTurn].name}`;
-            }
+            if (bombActivePlayers.length > 1) { document.getElementById('bombStatusBar').innerText = `🎯 Vez de: ${bombActivePlayers[bombCurrentTurn].name}`; }
+            else if (bombActivePlayers.length === 1) { document.getElementById('bombStatusBar').innerText = `🏆 Vitória Absoluta de ${bombActivePlayers[0].name}!`; }
             
             document.getElementById('bombAliveCount').innerText = bombActivePlayers.length;
             document.getElementById('bombDeadCount').innerText = bombEliminatedPlayers.length;
 
             document.getElementById('uiBombAliveList').innerHTML = bombActivePlayers.map((p, idx) => `
-                <div style="padding: 10px 14px; background: rgba(0,255,255,0.06); border: 1px solid rgba(0,255,255,0.2); border-radius: 10px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                <div style="padding: 10px 14px; background: rgba(0,255,255,0.06); border: 1px solid rgba(0,255,255,0.2); border-radius: 10px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
                     <span><i class="fa-solid fa-gamepad" style="color:var(--cyan-neon); margin-right:6px;"></i> <b>${p.name}</b></span>
-                    ${idx === bombCurrentTurn && bombActivePlayers.length > 1 ? '<span style="color:var(--cyan-neon); font-weight:bold; font-size:0.75rem; border:1px solid var(--cyan-neon); padding:2px 8px; border-radius:6px; text-transform:uppercase; background:rgba(0,255,255,0.15);">Sua Vez</span>' : ''}
+                    ${idx === bombCurrentTurn && bombActivePlayers.length > 1 ? '<span style="color:var(--cyan-neon); font-weight:bold; font-size:0.75rem; border:1px solid var(--cyan-neon); padding:2px 8px; border-radius:6px; text-transform:uppercase;">Sua Vez</span>' : ''}
                 </div>
             `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem; text-align:center;">Ninguém sobrevivendo.</div>';
 
             document.getElementById('uiBombDeadList').innerHTML = [...bombEliminatedPlayers].reverse().map((p, idx) => `
-                <div style="padding: 10px 14px; background: rgba(255,0,85,0.05); border: 1px solid rgba(255,0,85,0.2); border-radius: 10px; font-size: 0.95rem; color: #b0a9c0; display:flex; justify-content:space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-                    <span>💀 <b>${p.name}</b></span>
-                    <span style="font-size:0.8rem; color:#ff3366; font-style:italic; font-weight:bold; text-transform:uppercase;">Eliminado</span>
+                <div style="padding: 10px 14px; background: rgba(255,0,85,0.05); border: 1px solid rgba(255,0,85,0.2); border-radius: 10px; font-size: 0.95rem; color: #b0a9c0; display:flex; justify-content:space-between;">
+                    <span>💀 <b>${p.name}</b></span> <span style="font-size:0.8rem; color:#ff3366; font-weight:bold; text-transform:uppercase;">Eliminado</span>
                 </div>
-            `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem; text-align:center;">Nenhuma baixa registrada.</div>';
+            `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem; text-align:center;">Nenhuma baixa.</div>';
+        }
+
+        // --- NOVO JOGO: JOGO DA PORTA ---
+        function initDoorsGame() {
+            if(players.length === 0) return alert("Adicione jogadores no menu 'Gerenciar Time'!");
+            changeScreen('screenDoors');
+            doorsActivePlayers = [...players];
+            doorsEliminatedPlayers = [];
+            startDoorsRound();
+        }
+
+        function startDoorsRound() {
+            if(doorsActivePlayers.length <= 1) {
+                // Reinicia total se só sobrou 1 ou nenhum
+                doorsActivePlayers = [...players];
+                doorsEliminatedPlayers = [];
+            }
+            doorsCurrentTurn = 0;
+            
+            let doorCount = parseInt(document.getElementById('doorCountInput').value) || 6;
+            let safeCount = parseInt(document.getElementById('safeDoorCountInput').value) || 2;
+            
+            // Garantir portas suficientes para os jogadores vivos
+            if(doorCount < doorsActivePlayers.length) {
+                doorCount = doorsActivePlayers.length;
+                document.getElementById('doorCountInput').value = doorCount;
+                alert("O número de portas foi ajustado para igualar aos jogadores vivos.");
+            }
+            if(safeCount >= doorCount) {
+                safeCount = doorCount - 1;
+                document.getElementById('safeDoorCountInput').value = safeCount;
+            }
+
+            let deck = Array(safeCount).fill('angel').concat(Array(doorCount - safeCount).fill('devil'));
+            deck.sort(() => Math.random() - 0.5);
+            
+            doorsData = deck.map(type => ({ type, assignedTo: null }));
+            
+            document.getElementById('doorsActionBtnContainer').style.display = 'none';
+            renderDoorsGrid();
+            updateDoorsStatus();
+        }
+
+        function renderDoorsGrid() {
+            const grid = document.getElementById('uiDoorsGrid');
+            grid.innerHTML = doorsData.map((door, idx) => `
+                <div class="door-tile ${door.assignedTo ? 'assigned' : ''}" onclick="selectDoor(${idx})">
+                    <div class="door-number">${idx + 1}</div>
+                    🚪
+                    ${door.assignedTo ? `<div class="player-name">${door.assignedTo.name}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function selectDoor(idx) {
+            if(doorsCurrentTurn >= doorsActivePlayers.length) return; // todos já escolheram
+            if(doorsData[idx].assignedTo) return; // porta ocupada
+
+            doorsData[idx].assignedTo = doorsActivePlayers[doorsCurrentTurn];
+            doorsCurrentTurn++;
+            
+            renderDoorsGrid();
+            updateDoorsStatus();
+
+            if(doorsCurrentTurn >= doorsActivePlayers.length) {
+                document.getElementById('doorsActionBtnContainer').style.display = 'block';
+                document.getElementById('doorsStatusBar').innerText = `Todas as escolhas feitas! Pressione ABRIR PORTAS.`;
+            }
+        }
+
+        function openSelectedDoors() {
+            document.getElementById('doorsActionBtnContainer').style.display = 'none';
+            
+            let delays = 0;
+            const tiles = document.querySelectorAll('.door-tile');
+            
+            let survivors = [];
+            let deadThisRound = [];
+
+            doorsData.forEach((door, idx) => {
+                if(door.assignedTo) {
+                    setTimeout(() => {
+                        const tile = tiles[idx];
+                        if(door.type === 'angel') {
+                            tile.innerHTML = `<div class="door-number">${idx + 1}</div> 👼 <div class="player-name">${door.assignedTo.name}</div>`;
+                            tile.classList.add('open-angel');
+                            playAngelSound();
+                            survivors.push(door.assignedTo);
+                            registerLog("PORTA", `👼 ${door.assignedTo.name} encontrou o Anjo e está salvo!`);
+                        } else {
+                            tile.innerHTML = `<div class="door-number">${idx + 1}</div> 👿 <div class="player-name">${door.assignedTo.name}</div>`;
+                            tile.classList.add('open-devil');
+                            playDevilSound();
+                            deadThisRound.push(door.assignedTo);
+                            registerLog("PORTA", `👿 ${door.assignedTo.name} abriu o Demônio e foi eliminado!`);
+                        }
+                    }, delays * 900);
+                    delays++;
+                }
+            });
+
+            setTimeout(() => {
+                doorsActivePlayers = survivors;
+                doorsEliminatedPlayers.push(...deadThisRound);
+                
+                if(doorsActivePlayers.length === 1) {
+                    let absoluteWinner = doorsActivePlayers[0];
+                    let globalPlayer = players.find(p => p.name === absoluteWinner.name);
+                    if(globalPlayer) globalPlayer.xp += 250;
+                    registerLog("PORTA", `🏆 CAMPEÃO DA PORTA: ${absoluteWinner.name}!`);
+                    triggerVictoryCelebration(absoluteWinner.name);
+                    document.getElementById('doorsStatusBar').innerText = `🏆 Vitória Absoluta de ${absoluteWinner.name}!`;
+                } else if(doorsActivePlayers.length === 0) {
+                    document.getElementById('doorsStatusBar').innerText = `💀 Todos foram eliminados! Ninguém sobreviveu.`;
+                } else {
+                    document.getElementById('doorsStatusBar').innerText = `Rodada finalizada. Sobreviventes avançam para a próxima!`;
+                }
+                updateDoorsStatus();
+                persistData();
+                renderInterface();
+            }, delays * 900 + 1000);
+        }
+
+        function updateDoorsStatus() {
+            if(doorsCurrentTurn < doorsActivePlayers.length && doorsActivePlayers.length > 1) {
+                document.getElementById('doorsStatusBar').innerText = `👉 Escolha sua porta: ${doorsActivePlayers[doorsCurrentTurn].name}`;
+            }
+
+            document.getElementById('doorsAliveCount').innerText = doorsActivePlayers.length;
+            document.getElementById('doorsDeadCount').innerText = doorsEliminatedPlayers.length;
+            
+            document.getElementById('uiDoorsAliveList').innerHTML = doorsActivePlayers.map((p, idx) => `
+                <div style="padding: 10px 14px; background: rgba(0,255,255,0.06); border: 1px solid rgba(0,255,255,0.2); border-radius: 10px; display:flex; justify-content:space-between;">
+                    <span><i class="fa-solid fa-gamepad" style="color:var(--cyan-neon); margin-right:6px;"></i> <b>${p.name}</b></span>
+                    ${idx === doorsCurrentTurn && doorsActivePlayers.length > 1 ? '<span style="color:var(--cyan-neon); font-weight:bold; font-size:0.75rem; border:1px solid var(--cyan-neon); padding:2px 8px; border-radius:6px; text-transform:uppercase;">Sua Vez</span>' : ''}
+                </div>
+            `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem; text-align:center;">Ninguém vivo.</div>';
+
+            document.getElementById('uiDoorsDeadList').innerHTML = [...doorsEliminatedPlayers].reverse().map((p) => `
+                <div style="padding: 10px 14px; background: rgba(255,0,85,0.05); border: 1px solid rgba(255,0,85,0.2); border-radius: 10px; color: #b0a9c0; display:flex; justify-content:space-between;">
+                    <span>💀 <b>${p.name}</b></span>
+                    <span style="font-size:0.8rem; color:#ff3366; font-weight:bold; text-transform:uppercase;">Eliminado</span>
+                </div>
+            `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem; text-align:center;">Nenhuma baixa.</div>';
         }
 
 
         // --- JOGO DE FUTEBOL (PÊNALTIS) ---
         function initFootballGame() {
             if(players.length === 0) return alert("Adicione jogadores no menu 'Gerenciar Time'!");
-            changeScreen('screenFootball');
-            startNewFootballMatch();
+            changeScreen('screenFootball'); startNewFootballMatch();
         }
 
-        function startNewFootballMatch() {
-            footballActivePlayers = [...players];
-            footballEliminatedPlayers = [];
-            footballCurrentTurn = 0;
-            resetFootballVisuals();
-        }
+        function startNewFootballMatch() { footballActivePlayers = [...players]; footballEliminatedPlayers = []; footballCurrentTurn = 0; resetFootballVisuals(); }
 
         function resetFootballVisuals() {
-            document.getElementById('gkActor').style.left = "calc(50% - 35px)";
-            document.getElementById('ballActor').style.bottom = "15px";
-            document.getElementById('ballActor').style.left = "calc(50% - 20px)";
-            document.getElementById('ballActor').style.transform = "scale(1)";
-            
-            if (footballActivePlayers.length > 1) {
-                document.getElementById('footballStatusBar').innerText = `⚽ Turno de Chute: ${footballActivePlayers[footballCurrentTurn].name}`;
-            }
+            document.getElementById('gkActor').style.left = "calc(50% - 35px)"; document.getElementById('ballActor').style.bottom = "15px"; document.getElementById('ballActor').style.left = "calc(50% - 20px)"; document.getElementById('ballActor').style.transform = "scale(1)";
+            if (footballActivePlayers.length > 1) { document.getElementById('footballStatusBar').innerText = `⚽ Turno de Chute: ${footballActivePlayers[footballCurrentTurn].name}`; }
             updateFootballStatusAndRanks();
         }
 
         function executeKick(playerChoice) {
             if (footballActivePlayers.length <= 1) return;
-            
             const activePlayer = footballActivePlayers[footballCurrentTurn];
             const gkChoice = ['esquerda', 'centro', 'direita'][Math.floor(Math.random() * 3)];
             
-            const gk = document.getElementById('gkActor');
-            gk.style.left = gkChoice === 'esquerda' ? "15%" : (gkChoice === 'direita' ? "75%" : "calc(50% - 35px)");
-            
-            const ball = document.getElementById('ballActor');
-            ball.style.bottom = "170px"; 
-            ball.style.transform = "scale(0.65) rotate(720deg)";
-            ball.style.left = playerChoice === 'esquerda' ? "18%" : (playerChoice === 'direita' ? "78%" : "calc(50% - 20px)");
+            const gk = document.getElementById('gkActor'); gk.style.left = gkChoice === 'esquerda' ? "15%" : (gkChoice === 'direita' ? "75%" : "calc(50% - 35px)");
+            const ball = document.getElementById('ballActor'); ball.style.bottom = "170px"; ball.style.transform = "scale(0.65) rotate(720deg)"; ball.style.left = playerChoice === 'esquerda' ? "18%" : (playerChoice === 'direita' ? "78%" : "calc(50% - 20px)");
 
             setTimeout(() => {
                 if(playerChoice === gkChoice) {
-                    document.getElementById('footballStatusBar').innerText = `❌ DEFESA! ${activePlayer.name} foi eliminado!`;
-                    playWhistleSound();
-                    registerLog("FUTEBOL", `Goleiro defendeu o chute de ${activePlayer.name}. (Eliminado)`);
-                    
-                    footballEliminatedPlayers.push(activePlayer);
-                    footballActivePlayers.splice(footballCurrentTurn, 1);
-
+                    document.getElementById('footballStatusBar').innerText = `❌ DEFESA! ${activePlayer.name} foi eliminado!`; playWhistleSound();
+                    footballEliminatedPlayers.push(activePlayer); footballActivePlayers.splice(footballCurrentTurn, 1);
                     if(footballActivePlayers.length === 1) {
-                        let absoluteWinner = footballActivePlayers[0];
-                        let globalPlayer = players.find(p => p.name === absoluteWinner.name);
-                        if(globalPlayer) globalPlayer.xp += 200;
-                        
-                        registerLog("FUTEBOL", `🏆 CAMPEÃO DOS PÊNALTIS: ${absoluteWinner.name}!`);
-                        triggerVictoryCelebration(absoluteWinner.name);
-                        document.getElementById('footballStatusBar').innerText = `🏆 Vitória Absoluta de ${absoluteWinner.name}!`;
-                        updateFootballStatusAndRanks();
+                        let absoluteWinner = footballActivePlayers[0]; let globalPlayer = players.find(p => p.name === absoluteWinner.name); if(globalPlayer) globalPlayer.xp += 200;
+                        triggerVictoryCelebration(absoluteWinner.name); document.getElementById('footballStatusBar').innerText = `🏆 Vitória Absoluta de ${absoluteWinner.name}!`; updateFootballStatusAndRanks();
                     } else {
-                        if(footballCurrentTurn >= footballActivePlayers.length) {
-                            footballCurrentTurn = 0;
-                        }
+                        if(footballCurrentTurn >= footballActivePlayers.length) footballCurrentTurn = 0;
                         setTimeout(() => { resetFootballVisuals(); }, 2500);
                     }
                 } else {
-                    document.getElementById('footballStatusBar').innerText = `🎉 GOOOOL!!`;
-                    playGoalSound();
-                    let globalPlayer = players.find(p => p.name === activePlayer.name);
-                    if(globalPlayer) globalPlayer.xp += 100; 
-                    registerLog("FUTEBOL", `⚽ Golaço de ${activePlayer.name} (+100 XP).`);
-                    
+                    document.getElementById('footballStatusBar').innerText = `🎉 GOOOOL!!`; playGoalSound();
+                    let globalPlayer = players.find(p => p.name === activePlayer.name); if(globalPlayer) globalPlayer.xp += 100; 
                     footballCurrentTurn = (footballCurrentTurn + 1) % footballActivePlayers.length;
                     setTimeout(() => { resetFootballVisuals(); }, 2000);
                 }
-                persistData(); 
-                renderInterface();
+                persistData(); renderInterface();
             }, 500);
         }
 
@@ -1198,49 +1282,39 @@
             document.getElementById('footballDeadCount').innerText = footballEliminatedPlayers.length;
 
             document.getElementById('uiFootballAliveList').innerHTML = footballActivePlayers.map((p, idx) => `
-                <div style="padding: 10px 14px; background: rgba(0,255,255,0.06); border: 1px solid rgba(0,255,255,0.2); border-radius: 10px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                <div style="padding: 10px 14px; background: rgba(0,255,255,0.06); border: 1px solid rgba(0,255,255,0.2); border-radius: 10px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
                     <span><i class="fa-solid fa-gamepad" style="color:var(--cyan-neon); margin-right:6px;"></i> <b>${p.name}</b></span>
-                    ${idx === footballCurrentTurn && footballActivePlayers.length > 1 ? '<span style="color:var(--cyan-neon); font-weight:bold; font-size:0.75rem; border:1px solid var(--cyan-neon); padding:2px 8px; border-radius:6px; text-transform:uppercase; background:rgba(0,255,255,0.15);">Sua Vez</span>' : ''}
+                    ${idx === footballCurrentTurn && footballActivePlayers.length > 1 ? '<span style="color:var(--cyan-neon); font-weight:bold; font-size:0.75rem; border:1px solid var(--cyan-neon); padding:2px 8px; border-radius:6px; text-transform:uppercase;">Sua Vez</span>' : ''}
                 </div>
             `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem; text-align:center;">Ninguém sobrevivendo.</div>';
 
-            document.getElementById('uiFootballDeadList').innerHTML = [...footballEliminatedPlayers].reverse().map((p, idx) => `
-                <div style="padding: 10px 14px; background: rgba(255,0,85,0.05); border: 1px solid rgba(255,0,85,0.2); border-radius: 10px; font-size: 0.95rem; color: #b0a9c0; display:flex; justify-content:space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-                    <span>💀 <b>${p.name}</b></span>
-                    <span style="font-size:0.8rem; color:#ff3366; font-style:italic; font-weight:bold; text-transform:uppercase;">Eliminado</span>
+            document.getElementById('uiFootballDeadList').innerHTML = [...footballEliminatedPlayers].reverse().map((p) => `
+                <div style="padding: 10px 14px; background: rgba(255,0,85,0.05); border: 1px solid rgba(255,0,85,0.2); border-radius: 10px; font-size: 0.95rem; color: #b0a9c0; display:flex; justify-content:space-between;">
+                    <span>💀 <b>${p.name}</b></span> <span style="font-size:0.8rem; color:#ff3366; font-weight:bold; text-transform:uppercase;">Eliminado</span>
                 </div>
-            `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem; text-align:center;">Nenhuma baixa registrada.</div>';
+            `).join('') || '<div style="color:#7f7593; font-style:italic; font-size:0.9rem; text-align:center;">Nenhuma baixa.</div>';
         }
 
 
         // --- SORTEIO (ROLETA) ---
         function triggerRaffle() {
-            if(players.length === 0) return alert("Adicione jogadores para o sorteio!");
-            if(isRaffleRolling) return;
-            isRaffleRolling = true;
-            
-            playRaffleSound();
-
-            const display = document.getElementById('uiRaffleDisplay');
-            display.classList.add('rolling');
-            
-            let counter = 0;
-            let interval = setInterval(() => {
-                display.innerText = `🎲 ${players[Math.floor(Math.random() * players.length)].name} 🎲`;
-                counter++;
+            if(players.length === 0) return alert("Adicione jogadores!");
+            if(isRaffleRolling) return; isRaffleRolling = true; playRaffleSound();
+            const display = document.getElementById('uiRaffleDisplay'); display.classList.add('rolling');
+            let counter = 0; let interval = setInterval(() => {
+                display.innerText = `🎲 ${players[Math.floor(Math.random() * players.length)].name} 🎲`; counter++;
                 if(counter > 20) {
                     clearInterval(interval); display.classList.remove('rolling'); isRaffleRolling = false;
-                    let winner = players[Math.floor(Math.random() * players.length)];
-                    display.innerText = `👑 ${winner.name} 👑`;
-                    registerLog("SORTEIO", `🎉 ${winner.name} ganhou o sorteio!`);
-                    triggerVictoryCelebration(winner.name);
+                    let winner = players[Math.floor(Math.random() * players.length)]; display.innerText = `👑 ${winner.name} 👑`;
+                    registerLog("SORTEIO", `🎉 ${winner.name} ganhou o sorteio!`); triggerVictoryCelebration(winner.name);
                 }
             }, 100);
         }
 
-        // --- NOVO JOGO: ACERTE O PREÇO (ATUALIZADO) ---
+        // --- ACERTE O PREÇO (ATUALIZADO COM LISTAGEM E ELIMINAÇÃO) ---
         function updateRegProdCount() {
             document.getElementById('regProdCount').innerText = registeredPriceProducts.length;
+            renderPriceProductsList();
         }
 
         function initPriceGame() {
@@ -1248,7 +1322,7 @@
             changeScreen('screenPriceRight');
             updateRegProdCount();
             document.getElementById('priceProductPreviewContainer').style.display = 'none';
-            document.getElementById('uiPricePlayersForm').innerHTML = '<p style="color: #7f7593; font-style: italic;">Sorteie um produto acima para iniciar a rodada e liberar os palpites.</p>';
+            document.getElementById('uiPricePlayersForm').innerHTML = '<p style="color: #7f7593; font-style: italic;">Defina um produto acima para iniciar a rodada e liberar os palpites.</p>';
             document.getElementById('btnCalculatePriceGame').style.display = 'none';
             document.getElementById('uiPriceResultsWrapper').style.display = 'none';
         }
@@ -1258,44 +1332,69 @@
             const value = parseInt(document.getElementById('regProdValue').value);
             const imgFile = document.getElementById('regProdImg');
 
-            if(!name || isNaN(value) || value <= 0) {
-                return alert("Insira um nome válido e o valor em Créditos do IMVU!");
-            }
+            if(!name || isNaN(value) || value <= 0) return alert("Insira um nome válido e o valor em Créditos do IMVU!");
 
             if(imgFile.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     registeredPriceProducts.push({ name: name, value: value, image: e.target.result });
-                    persistData();
-                    updateRegProdCount();
-                    document.getElementById('regProdName').value = '';
-                    document.getElementById('regProdValue').value = '';
-                    imgFile.value = '';
-                    registerLog("PREÇO", `Produto cadastrado: '${name}'.`);
+                    persistData(); updateRegProdCount();
+                    document.getElementById('regProdName').value = ''; document.getElementById('regProdValue').value = ''; imgFile.value = '';
                     alert("Produto Salvo com Sucesso!");
                 };
                 reader.readAsDataURL(imgFile.files[0]);
             } else {
                 registeredPriceProducts.push({ name: name, value: value, image: '' });
-                persistData();
-                updateRegProdCount();
-                document.getElementById('regProdName').value = '';
-                document.getElementById('regProdValue').value = '';
-                registerLog("PREÇO", `Produto cadastrado sem imagem: '${name}'.`);
+                persistData(); updateRegProdCount();
+                document.getElementById('regProdName').value = ''; document.getElementById('regProdValue').value = '';
                 alert("Produto Salvo com Sucesso!");
             }
         }
 
-        function drawPriceProduct() {
-            if(registeredPriceProducts.length === 0) {
-                return alert("Cadastre pelo menos um produto no banco antes de sortear!");
-            }
+        function renderPriceProductsList() {
+            const list = document.getElementById('uiPriceProductList');
+            if(!list) return;
+            
+            list.innerHTML = registeredPriceProducts.map((prod, idx) => `
+                <div class="item-card" style="margin-bottom: 5px; padding: 8px 12px;">
+                    <div style="display:flex; align-items:center; gap: 10px; overflow:hidden; flex-grow: 1;">
+                        ${prod.image ? `<img src="${prod.image}" style="width:30px; height:30px; object-fit:cover; border-radius:4px;">` : '<i class="fa-solid fa-tag" style="color: var(--cyan-neon);"></i>'}
+                        <span style="font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${prod.name}"><b>${prod.name}</b> <small style="color:var(--lime-neon);">(${prod.value} Cr)</small></span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-success" style="padding: 4px 8px; font-size:0.75rem;" onclick="selectPriceProduct(${idx})"><i class="fa-solid fa-check"></i> Sel.</button>
+                        <button class="btn-remove-icon" style="font-size: 1rem;" onclick="deletePriceProduct(${idx})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('') || '<p style="color: #7f7593; font-style: italic; text-align: center; font-size: 0.85rem;">Nenhum produto cadastrado.</p>';
+        }
 
-            // Seleciona um produto aleatório
+        function deletePriceProduct(idx) {
+            registeredPriceProducts.splice(idx, 1);
+            persistData(); updateRegProdCount();
+        }
+
+        function deleteAllPriceProducts() {
+            if(confirm("Deseja EXCLUIR TODOS os produtos da base de dados?")) {
+                registeredPriceProducts = []; persistData(); updateRegProdCount();
+            }
+        }
+
+        // Seleção via Botão "Sel."
+        function selectPriceProduct(idx) {
+            priceGameCurrentProduct = registeredPriceProducts[idx];
+            preparePriceRound();
+        }
+
+        // Sorteio Aleatório
+        function drawPriceProduct() {
+            if(registeredPriceProducts.length === 0) return alert("Cadastre pelo menos um produto no banco!");
             const randomIndex = Math.floor(Math.random() * registeredPriceProducts.length);
             priceGameCurrentProduct = registeredPriceProducts[randomIndex];
+            preparePriceRound();
+        }
 
-            // Atualiza UI de Exibição Bonita
+        function preparePriceRound() {
             document.getElementById('pricePreviewTitleActor').innerText = priceGameCurrentProduct.name;
             if(priceGameCurrentProduct.image) {
                 document.getElementById('pricePreviewImageActor').src = priceGameCurrentProduct.image;
@@ -1305,94 +1404,105 @@
             }
             document.getElementById('priceProductPreviewContainer').style.display = 'flex';
 
-            // Prepara formulário de palpites dos jogadores
             const formBox = document.getElementById('uiPricePlayersForm');
             formBox.innerHTML = players.map(p => `
                 <div class="item-card" style="border-left: 3px solid var(--purple-galactic); background: rgba(0,0,0,0.5);">
                     <span style="font-weight: 600; font-size: 1.1rem;"><i class="fa-solid fa-user-tag" style="color: var(--cyan-neon); margin-right: 6px;"></i> ${p.name}</span>
-                    <input type="number" class="player-price-guess-input" data-player="${p.name}" placeholder="Palpite (Créditos)" style="max-width: 170px; text-align: right; margin-bottom: 0; font-weight: bold; font-size: 1.1rem; padding: 10px;">
+                    <input type="number" class="player-price-guess-input" data-player="${p.name}" placeholder="Palpite" style="max-width: 140px; text-align: right; margin-bottom: 0; font-weight: bold; font-size: 1.1rem; padding: 10px;">
                 </div>
             `).join('');
 
             document.getElementById('btnCalculatePriceGame').style.display = 'block';
             document.getElementById('uiPriceResultsWrapper').style.display = 'none';
-            registerLog("PREÇO", `Rodada iniciada! Produto Sorteado: '${priceGameCurrentProduct.name}'.`);
+            registerLog("PREÇO", `Rodada definida! Produto: '${priceGameCurrentProduct.name}'.`);
         }
 
         function calculatePriceResults() {
             const inputs = document.querySelectorAll('.player-price-guess-input');
-            let dataPalpites = [];
-            let inputIncompleto = false;
+            let dataPalpites = []; let inputIncompleto = false;
 
             inputs.forEach(inp => {
                 const pName = inp.getAttribute('data-player');
                 const val = parseInt(inp.value);
-                if(isNaN(val) || val < 0) {
-                    inputIncompleto = true;
-                }
+                if(isNaN(val) || val < 0) inputIncompleto = true;
                 dataPalpites.push({ name: pName, guess: val });
             });
 
-            if(inputIncompleto) {
-                return alert("Por favor, preencha o palpite de todos os participantes antes de processar!");
-            }
+            if(inputIncompleto) return alert("Por favor, preencha o palpite de todos os participantes antes de processar!");
 
             const valorReal = priceGameCurrentProduct.value;
 
             let processados = dataPalpites.map(item => {
                 let diferenca = valorReal - item.guess;
                 let absDiferenca = Math.abs(diferenca);
-                let porcentagemProximidade = valorReal > 0 ? Math.max(0, 100 - (absDiferenca / valorReal * 100)) : 0;
+                let ultrapassou = diferenca < 0; // REGRAS DE ELIMINAÇÃO: Se a diferença for negativa, ele chutou mais que o valor real.
+                
+                let porcentagemProximidade = 0;
+                if(!ultrapassou) {
+                    porcentagemProximidade = valorReal > 0 ? Math.max(0, 100 - (absDiferenca / valorReal * 100)) : 0;
+                }
                 
                 let logicaTexto = "";
-                if(diferenca > 0) {
-                    logicaTexto = `faltou ${diferenca} Créditos para completar`;
-                } else if(diferenca < 0) {
-                    logicaTexto = `passou ${absDiferenca} Créditos do valor`;
-                } else {
-                    logicaTexto = "acertou o valor exato em cheio!";
-                }
+                if(ultrapassou) { logicaTexto = `Passou ${absDiferenca} Cr (Eliminado!)`; }
+                else if(diferenca > 0) { logicaTexto = `Faltou ${diferenca} Cr`; }
+                else { logicaTexto = "Acertou em cheio!"; }
 
-                return { ...item, diferenca, absDiferenca, pct: porcentagemProximidade, txt: logicaTexto };
+                return { ...item, diferenca, absDiferenca, pct: porcentagemProximidade, txt: logicaTexto, ultrapassou };
             });
 
-            // Ordena pelo menor erro absoluto (quem chegou mais perto)
-            processados.sort((a, b) => a.absDiferenca - b.absDiferenca);
+            // Ordenação:
+            // 1. Quem NÃO ultrapassou vem primeiro (ordenado pela proximidade / menor diferença)
+            // 2. Quem ULTRAPASSOU vai para o fim da lista.
+            processados.sort((a, b) => {
+                if(a.ultrapassou && !b.ultrapassou) return 1;
+                if(!a.ultrapassou && b.ultrapassou) return -1;
+                return a.absDiferenca - b.absDiferenca;
+            });
 
             const vencedor = processados[0];
             
-            // Incrementa XP do vencedor do chute
-            let globalPlayer = players.find(p => p.name === vencedor.name);
-            if(globalPlayer) globalPlayer.xp += 150;
-
-            registerLog("PREÇO", `Fim de Jogo! Vencedor: ${vencedor.name} (Chute: ${vencedor.guess} Créditos | ${vencedor.txt}).`);
-            persistData();
-            renderInterface();
-
-            // Mensagem explicativa
-            let msgFormatada = `👑 <span style="color: var(--cyan-neon); font-weight: 800;">${vencedor.name}</span> foi o mais próximo!<br>O produto custa <b>${valorReal} Créditos</b>, o palpite foi <b>${vencedor.guess} Créditos</b>, ou seja, <u>${vencedor.txt}</u>.`;
-            document.getElementById('uiPriceWinnerBillboard').innerHTML = msgFormatada;
+            // Verifica se até o "vencedor" foi eliminado (caso todos tenham ultrapassado o valor)
+            if(vencedor.ultrapassou) {
+                document.getElementById('uiPriceWinnerBillboard').innerHTML = `💀 <span style="color: #ff3366; font-weight: 800;">TODOS ELIMINADOS!</span><br>O produto custava <b>${valorReal} Créditos</b> e todos os palpites ultrapassaram o valor.`;
+                registerLog("PREÇO", `Fim de Jogo! Ninguém venceu, todos ultrapassaram o valor (${valorReal} Cr).`);
+            } else {
+                let globalPlayer = players.find(p => p.name === vencedor.name); if(globalPlayer) globalPlayer.xp += 150;
+                registerLog("PREÇO", `Fim de Jogo! Vencedor: ${vencedor.name} (${vencedor.guess} Cr).`);
+                
+                let msgFormatada = `👑 <span style="color: var(--cyan-neon); font-weight: 800;">${vencedor.name}</span> foi o melhor!<br>O produto custa <b>${valorReal} Créditos</b> e o palpite foi <b>${vencedor.guess} Cr</b> (${vencedor.txt}).`;
+                document.getElementById('uiPriceWinnerBillboard').innerHTML = msgFormatada;
+                triggerVictoryCelebration(vencedor.name);
+            }
             
-            // Aciona o Modal Épico
-            triggerVictoryCelebration(vencedor.name);
+            persistData(); renderInterface();
 
-            // Renderiza as barrinhas de valor de proximidade
+            // Renderiza as barrinhas (Com visual Vermelho/Eliminado para quem passou)
             const containerBarras = document.getElementById('uiPriceRankBarsContainer');
             containerBarras.innerHTML = processados.map((item, idx) => {
-                let medalha = idx === 0 ? '🏆' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '⭐';
+                let isWinner = (!item.ultrapassou && idx === 0);
+                let medalha = item.ultrapassou ? '💀' : (isWinner ? '🏆' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : '⭐')));
+                let cssClasse = item.ultrapassou ? 'eliminated' : (isWinner ? 'pos-1' : '');
+                
+                let fillBg = item.ultrapassou ? 'linear-gradient(90deg, #ff0055, #9b0026)' : 'linear-gradient(90deg, var(--pink-neon), var(--lime-neon))';
+                let fillShadow = item.ultrapassou ? '0 0 8px #ff0055' : '0 0 8px var(--lime-neon)';
+                
+                let tagEliminado = item.ultrapassou ? `<span style="background: rgba(255,0,0,0.2); color: #ff3366; border: 1px solid #ff3366; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; margin-left: 10px;">ELIMINADO (PASSOU)</span>` : '';
+                let exibirPct = item.ultrapassou ? '0.0%' : item.pct.toFixed(1) + '% de Acerto';
+                let colorPct = item.ultrapassou ? '#ff3366' : 'var(--lime-neon)';
+
                 return `
-                <div class="podium-item ${idx === 0 ? 'pos-1' : ''}">
+                <div class="podium-item ${cssClasse}">
                     <div class="medal">${medalha}</div>
                     <div class="rank-info">
-                        <div style="font-weight: 800; text-transform: uppercase; display: flex; justify-content: space-between;">
-                            <span>${item.name}</span>
-                            <span style="color: var(--pink-neon); font-size: 0.95rem;">Palpite: ${item.guess} Créditos</span>
+                        <div style="font-weight: 800; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center;">
+                            <div>${item.name} ${tagEliminado}</div>
+                            <span style="color: ${item.ultrapassou ? '#ff3366' : 'var(--pink-neon)'}; font-size: 0.95rem;">Chute: ${item.guess} Cr</span>
                         </div>
                         <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#aaa; margin-top: 3px;">
-                            <span>Nota: ${item.txt}</span>
-                            <span style="color:var(--lime-neon); font-weight:bold;">${item.pct.toFixed(1)}% de Acerto</span>
+                            <span>${item.txt}</span>
+                            <span style="color:${colorPct}; font-weight:bold;">${exibirPct}</span>
                         </div>
-                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${item.pct}%; background: linear-gradient(90deg, var(--pink-neon), var(--lime-neon)); box-shadow: 0 0 8px var(--lime-neon);"></div></div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${item.pct}%; background: ${fillBg}; box-shadow: ${fillShadow};"></div></div>
                     </div>
                 </div>
                 `;
@@ -1404,11 +1514,8 @@
         function exportToCSV() {
             if(systemLogs.length === 0) return alert("Não há dados para exportar.");
             let csvContent = "\ufeffData;Hora;Modulo;Ação\n" + systemLogs.map(l => `${l.date};${l.time};${l.tag};${l.msg}`).join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "scrox_gamer_space_relatorio_completo.csv";
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob); link.download = "scrox_gamer_space_relatorio_completo.csv"; document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
         renderInterface();
