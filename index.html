@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Concursos - Discord (Salva Dados)</title>
+    <style>
+        :root {
+            --bg-color: #313338;
+            --panel-bg: #2b2d31;
+            --text-color: #dbdee1;
+            --accent-color: #5865f2;
+            --accent-hover: #4752c4;
+            --border-color: #3f4147;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 {
+            color: #ffffff;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--panel-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            height: fit-content;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: #1e1f22;
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .crit-list, .cand-list {
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #383a40;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+
+        .btn-del {
+            background-color: #da373c;
+            width: auto;
+            padding: 5px 10px;
+            margin: 0;
+        }
+        .btn-del:hover { background-color: #a92b2f; }
+
+        .btn-reset {
+            background-color: #4e5058;
+            margin-top: 15px;
+        }
+        .btn-reset:hover { background-color: #6d6f78; }
+
+        /* Área de Avaliação */
+        .candidato-card {
+            background-color: #383a40;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .cand-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cand-thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            background: #1e1f22;
+        }
+
+        .notas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        /* Podio */
+        .podium {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .podium-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background: #383a40;
+        }
+
+        .pos-1 { border: 2px solid #f1c40f; background: rgba(241, 196, 15, 0.1); }
+        .pos-2 { border: 2px solid #e74c3c; background: rgba(231, 76, 60, 0.1); }
+        .pos-3 { border: 2px solid #e67e22; background: rgba(230, 126, 34, 0.1); }
+        .pos-4 { border: 2px solid #9b59b6; background: rgba(155, 89, 182, 0.1); }
+
+        .medal {
+            font-size: 24px;
+            font-weight: bold;
+            min-width: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🏆 Painel de Concursos Discord</h1>
+        <p>Seus dados são salvos automaticamente neste navegador!</p>
+    </div>
+
+    <div class="grid">
+        <div class="panel">
+            <h2>1. Critérios de Avaliação</h2>
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="crit-nome" placeholder="Ex: Criatividade">
+                <input type="number" id="crit-peso" placeholder="Peso" style="width: 70px;" min="1" value="1">
+                <button onclick="adicionarCriterio()" style="width: auto;">+</button>
+            </div>
+            <div id="lista-criterios" class="crit-list"></div>
+
+            <hr style="border-color: var(--border-color); margin: 20px 0;">
+
+            <h2>2. Adicionar Candidato</h2>
+            <input type="text" id="cand-nome" placeholder="Nome do Candidato (ex: @User)">
+            <label style="font-size: 12px; color: #aaa;">Foto do Candidato:</label>
+            <input type="file" id="cand-foto" accept="image/*">
+            <button onclick="adicionarCandidato()">Adicionar à Lista</button>
+            <div id="lista-nomes-candidatos" class="cand-list"></div>
+
+            <hr style="border-color: var(--border-color); margin: 20px 0;">
+            
+            <button class="btn-reset" onclick="limparTudo()">🧹 Resetar Todo o Concurso</button>
+        </div>
+
+        <div>
+            <div class="panel" style="margin-bottom: 20px;">
+                <h2>📊 Classificação Atual</h2>
+                <div id="podio" class="podium">
+                    <p style="color: #aaa;">Adicione critérios e candidatos com notas para calcular o pódio.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>✍️ Notas dos Candidatos</h2>
+                <div id="quadro-avaliacao">
+                    <p style="color: #aaa;">Nenhum candidato pronto para avaliação.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let criterios = [];
+    let candidatos = [];
+
+    // --- CARREGAR DADOS AO ABRIR O SITE ---
+    window.onload = function() {
+        const dadosSalvosCrit = localStorage.getItem('discord_concurso_criterios');
+        const dadosSalvosCand = localStorage.getItem('discord_concurso_candidatos');
+
+        if(dadosSalvosCrit) criterios = JSON.parse(dadosSalvosCrit);
+        if(dadosSalvosCand) candidatos = JSON.parse(dadosSalvosCand);
+
+        atualizarInterface();
+    };
+
+    // --- FUNÇÃO PARA SALVAR AUTOMATICAMENTE ---
+    function salvarNoNavegador() {
+        localStorage.setItem('discord_concurso_criterios', JSON.stringify(criterios));
+        localStorage.setItem('discord_concurso_candidatos', JSON.stringify(candidatos));
+    }
+
+    // --- FUNÇÕES DE CRITÉRIOS ---
+    function adicionarCriterio() {
+        const nomeIn = document.getElementById('crit-nome');
+        const pesoIn = document.getElementById('crit-peso');
+        
+        if(!nomeIn.value.trim()) return alert('Digite o nome do critério!');
+
+        criterios.push({
+            id: Date.now().toString(),
+            nome: nomeIn.value.trim(),
+            peso: parseFloat(pesoIn.value) || 1
+        });
+
+        nomeIn.value = '';
+        pesoIn.value = '1';
+        
+        salvarNoNavegador();
+        atualizarInterface();
+    }
+
+    function removerCriterio(id) {
+        criterios = criterios.filter(c => c.id !== id);
+        candidatos.forEach(cand => delete cand.notas[id]);
+        salvarNoNavegador();
+        atualizarInterface();
+    }
+
+    // --- FUNÇÕES DE CANDIDATOS ---
+    function adicionarCandidato() {
+        const nomeIn = document.getElementById('cand-nome');
+        const fotoIn = document.getElementById('cand-foto');
+
+        if(!nomeIn.value.trim()) return alert('Digite o nome do candidato!');
+        if(!fotoIn.files[0]) return alert('Selecione a foto do candidato!');
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            candidatos.push({
+                id: Date.now().toString(),
+                nome: nomeIn.value.trim(),
+                foto: e.target.result, // A foto vira texto base64 e salva direto na memória
+                notas: {}
+            });
+            
+            nomeIn.value = '';
+            fotoIn.value = '';
+            salvarNoNavegador();
+            atualizarInterface();
+        };
+        reader.readAsDataURL(fotoIn.files[0]);
+    }
+
+    function removerCandidato(id) {
+        candidatos = candidatos.filter(c => c.id !== id);
+        salvarNoNavegador();
+        atualizarInterface();
+    }
+
+    // --- ATUALIZAÇÃO DA NOTA ---
+    function atualizarNota(candId, critId, nota) {
+        const cand = candidatos.find(c => c.id === candId);
+        if(cand) {
+            cand.notas[critId] = parseFloat(nota) || 0;
+            salvarNoNavegador(); // Salva a nota digitada na hora
+            calcularResultados();
+        }
+    }
+
+    // --- LIMPAR TUDO PARA NOVO CONCURSO ---
+    function limparTudo() {
+        if(confirm("Tem certeza que deseja apagar TODOS os candidatos, fotos e critérios desse concurso?")) {
+            localStorage.removeItem('discord_concurso_criterios');
+            localStorage.removeItem('discord_concurso_candidatos');
+            criterios = [];
+            candidatos = [];
+            atualizarInterface();
+        }
+    }
+
+    // --- PROCESSAMENTO E CÁLCULO ---
+    function calcularResultados() {
+        if(candidatos.length === 0 || criterios.length === 0) {
+            document.getElementById('podio').innerHTML = '<p style="color: #aaa;">Aguardando dados suficientes...</p>';
+            return;
+        }
+
+        let totalPesos = criterios.reduce((acc, c) => acc + c.peso, 0);
+
+        let classificados = candidatos.map(cand => {
+            let somaNotas = 0;
+            criterios.forEach(crit => {
+                let nota = cand.notas[crit.id] || 0;
+                somaNotas += nota * crit.peso;
+            });
+            let media = totalPesos > 0 ? (somaNotas / totalPesos) : 0;
+            return { ...cand, media: media };
+        });
+
+        classificados.sort((a, b) => b.media - a.media);
+
+        const podioDiv = document.getElementById('podio');
+        podioDiv.innerHTML = '';
+
+        classificados.forEach((cand, index) => {
+            if(index > 3) return;
+
+            let classePos = '';
+            let medalha = '';
+
+            if(index === 0) { classePos = 'pos-1'; medalha = '🥇 1º'; }
+            else if(index === 1) { classePos = 'pos-2'; medalha = '🥈 2º'; }
+            else if(index === 2) { classePos = 'pos-3'; medalha = '🥉 3º'; }
+            else if(index === 3) { classePos = 'pos-4'; medalha = '🎖️ M.H.'; }
+
+            podioDiv.innerHTML += `
+                <div class="podium-item ${classePos}">
+                    <div class="medal">${medalha}</div>
+                    <img src="${cand.foto}" class="cand-thumb" alt="">
+                    <div>
+                        <strong>${cand.nome}</strong><br>
+                        <small>Média: ${cand.media.toFixed(2)}</small>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // --- ATUALIZAÇÃO GERAL DA INTERFACE ---
+    function atualizarInterface() {
+        const listCrit = document.getElementById('lista-criterios');
+        listCrit.innerHTML = '';
+        criterios.forEach(c => {
+            listCrit.innerHTML += `
+                <div class="item-row">
+                    <span>${c.nome} (Peso: ${c.peso})</span>
+                    <button class="btn-del" onclick="removerCriterio('${c.id}')">X</button>
+                </div>
+            `;
+        });
+
+        const listCandNomes = document.getElementById('lista-nomes-candidatos');
+        listCandNomes.innerHTML = '';
+        candidatos.forEach(c => {
+            listCandNomes.innerHTML += `
+                <div class="item-row">
+                    <span>${c.nome}</span>
+                    <button class="btn-del" onclick="removerCandidato('${c.id}')">X</button>
+                </div>
+            `;
+        });
+
+        const quadro = document.getElementById('quadro-avaliacao');
+        if(candidatos.length === 0) {
+            quadro.innerHTML = '<p style="color: #aaa;">Nenhum candidato pronto para avaliação.</p>';
+            calcularResultados();
+            return;
+        }
+
+        quadro.innerHTML = '';
+        candidatos.forEach(cand => {
+            let htmlNotas = '';
+            
+            if(criterios.length === 0) {
+                htmlNotas = '<p style="color: #aaa; font-size: 13px;">Adicione critérios primeiro para dar notas.</p>';
+            } else {
+                criterios.forEach(crit => {
+                    let valorNota = cand.notas[crit.id] !== undefined ? cand.notas[crit.id] : '';
+                    htmlNotas += `
+                        <div>
+                            <label style="font-size:12px; display:block;">${crit.nome}:</label>
+                            <input type="number" min="0" max="10" step="0.5" placeholder="Nota 0-10" 
+                                value="${valorNota}" 
+                                oninput="atualizarNota('${cand.id}', '${crit.id}', this.value)">
+                        </div>
+                    `;
+                });
+            }
+
+            quadro.innerHTML += `
+                <div class="candidato-card">
+                    <div class="cand-info">
+                        <img src="${cand.foto}" class="cand-thumb" alt="Foto">
+                        <h3>${cand.nome}</h3>
+                    </div>
+                    <div class="notas-grid">
+                        ${htmlNotas}
+                    </div>
+                </div>
+            `;
+        });
+
+        calcularResultados();
+    }
+</script>
+
+</body>
+</html>
