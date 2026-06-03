@@ -239,20 +239,44 @@
         .nav-footer { margin-top: auto; display: flex; gap: 10px; padding-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.1); flex-wrap: wrap; justify-content: center; }
         
         .celebration-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 3, 10, 0.85); z-index: 999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .celebration-modal { background: linear-gradient(135deg, #180a30, #0a0418); border: 3px solid var(--cyan-neon); border-radius: 30px; padding: 50px 40px; text-align: center; max-width: 500px; width: 90%; box-shadow: 0 0 50px var(--purple-galactic); animation: modalPop 0.5s forwards; }
+        .celebration-modal { background: linear-gradient(135deg, #180a30, #0a0418); border: 3px solid var(--cyan-neon); border-radius: 30px; padding: 50px 40px; text-align: center; max-width: 500px; width: 90%; box-shadow: 0 0 50px var(--purple-galactic); animation: modalPop 0.5s forwards; position: relative; }
         @keyframes modalPop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .celebration-modal h2 { font-size: 2.5rem; font-weight: 900; color: var(--pink-neon); margin-bottom: 15px; }
-        .celebration-modal .winner-title-name { font-size: 2.2rem; font-weight: 800; color: var(--cyan-neon); margin-bottom: 25px; text-shadow: 0 0 15px rgba(0, 255, 255, 0.6); }
+        .celebration-modal h2 { font-size: 2.5rem; font-weight: 900; color: var(--pink-neon); margin-bottom: 15px; z-index: 10; position: relative;}
+        .celebration-modal .winner-title-name { font-size: 2.2rem; font-weight: 800; color: var(--cyan-neon); margin-bottom: 25px; text-shadow: 0 0 15px rgba(0, 255, 255, 0.6); z-index: 10; position: relative;}
         
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: var(--purple-galactic); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--cyan-neon); }
+
+        /* --- ANIMAÇÕES DE CELEBRAÇÃO (CONFETES E TROFÉU) --- */
+        .confetti-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; overflow: hidden; z-index: 1000; display: none; }
+        .confetti { position: absolute; width: 12px; height: 12px; animation: fall linear infinite; top: -20px; }
+        @keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+        
+        .giant-trophy { font-size: 5rem; animation: bounceTrophy 1.5s ease-in-out infinite alternate; text-shadow: 0 0 40px rgba(255, 215, 0, 0.8); margin-bottom: 10px; z-index: 10; position: relative; }
+        @keyframes bounceTrophy { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-20px) scale(1.1); } }
+        
+        /* --- ESTILOS EXTRAS DO JOGO O PREÇO CERTO --- */
+        .price-product-showcase {
+            background: linear-gradient(135deg, rgba(138,43,226,0.15), rgba(0,255,255,0.1));
+            border: 2px solid var(--cyan-neon); padding: 30px; border-radius: 16px; 
+            box-shadow: 0 0 30px rgba(0,255,255,0.15); position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .price-product-showcase::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,0,204,0.1) 0%, transparent 70%);
+            animation: rotateGlow 10s linear infinite; z-index: 0; pointer-events: none;
+        }
+        @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
+
     </style>
 </head>
 <body>
 
     <div class="space-background" id="spaceBg"></div>
+    <div class="confetti-container" id="globalConfetti"></div>
 
     <div class="led-container">
         <h1 class="led-title">SCROX GAMER SPACE</h1>
@@ -296,7 +320,7 @@
                 <div class="game-card" onclick="initPriceGame()">
                     <i class="fa-solid fa-tags" style="background: linear-gradient(135deg, var(--lime-neon), var(--pink-neon)); -webkit-background-clip: text;"></i>
                     <h3>Acerte o Preço</h3>
-                    <p>Estipule valores reais de produtos e gerencie palpites de proximidade.</p>
+                    <p>Sorteie produtos e gerencie palpites em Créditos do IMVU.</p>
                 </div>
             </div>
             <button class="btn btn-success" style="width: 100%; padding: 18px; font-size: 1.2rem;" onclick="changeScreen('screenDashboard')">
@@ -452,48 +476,62 @@
         <!-- NOVO: TELA 8 - ACERTE O PREÇO -->
         <div class="screen" id="screenPriceRight">
             <div class="screen-header">
-                <h2 class="screen-title"><i class="fa-solid fa-tags"></i> Acerte o Preço Neon</h2>
+                <h2 class="screen-title"><i class="fa-solid fa-tags"></i> Acerte o Preço (IMVU)</h2>
                 <button class="btn btn-secondary" onclick="changeScreen('screenMenu')"><i class="fa-solid fa-chevron-left"></i> Menu</button>
             </div>
             
-            <div class="split-layout">
-                <!-- Configurações do Produto -->
-                <div class="list-box" style="border-top: 3px solid var(--cyan-neon);">
-                    <h3 style="margin-bottom: 15px; color: var(--cyan-neon); font-weight: 800;"><i class="fa-solid fa-box-open"></i> 1. Detalhes do Produto</h3>
+            <div class="split-layout" style="margin-bottom: 25px;">
+                <!-- ABA 1: CADASTRAR PRODUTO -->
+                <div class="list-box" style="border-top: 3px solid var(--purple-galactic);">
+                    <h3 style="margin-bottom: 15px; color: var(--purple-galactic); font-weight: 800;"><i class="fa-solid fa-plus-circle"></i> 1. Cadastrar Produto</h3>
                     <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 12px;">
-                        <input type="text" id="priceGameProdName" placeholder="Nome do Produto/Item...">
-                        <input type="number" id="priceGameProdValue" placeholder="Valor Real (R$)" step="0.01">
-                        <label style="font-size: 0.85rem; color: #b0a9c0; font-weight: 600; margin-bottom: -5px;">Upload da Foto:</label>
-                        <input type="file" id="priceGameProdImg" accept="image/*" style="font-size: 0.8rem;">
+                        <input type="text" id="regProdName" placeholder="Nome do Produto/Item...">
+                        <input type="number" id="regProdValue" placeholder="Valor (Créditos IMVU)">
+                        <label style="font-size: 0.85rem; color: #b0a9c0; font-weight: 600; margin-bottom: -5px;">Upload da Foto do Item:</label>
+                        <input type="file" id="regProdImg" accept="image/*" style="font-size: 0.8rem;">
+                        <button class="btn btn-secondary" onclick="savePriceProduct()" style="margin-top: 10px;">
+                            <i class="fa-solid fa-floppy-disk"></i> Salvar Produto no Banco
+                        </button>
                     </div>
-                    <button class="btn btn-success" style="width: 100%; margin-top: 15px;" onclick="startPriceRound()">
-                        <i class="fa-solid fa-circle-play"></i> Iniciar Coleta de Palpites
-                    </button>
-                    
-                    <!-- Preview Dinâmico -->
-                    <div id="priceProductPreviewContainer" style="margin-top: 20px; display: none; text-align: center; border: 1px dashed rgba(255,255,255,0.15); padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.3);">
-                        <img id="pricePreviewImageActor" src="" style="max-width: 100%; max-height: 180px; border-radius: 8px; margin-bottom: 10px; object-fit: contain; border: 1px solid var(--purple-galactic);">
-                        <h4 id="pricePreviewTitleActor" style="color: #fff; font-size: 1.2rem; font-weight: 800;"></h4>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: #b0a9c0; text-align: center;">
+                        Itens Cadastrados Atualmente: <span id="regProdCount" style="color: var(--cyan-neon); font-weight: bold; font-size: 1.2rem;">0</span>
                     </div>
                 </div>
 
-                <!-- Lançamento Manual de Palpites -->
-                <div class="list-box" style="border-top: 3px solid var(--pink-neon);">
-                    <h3 style="margin-bottom: 15px; color: var(--pink-neon); font-weight: 800;"><i class="fa-solid fa-keyboard"></i> 2. Registrar Palpites</h3>
-                    <div id="uiPricePlayersForm" style="display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 5px;">
-                        <p style="color: #7f7593; font-style: italic;">Insira o produto e inicie a rodada.</p>
-                    </div>
-                    <button class="btn btn-danger" id="btnCalculatePriceGame" style="width: 100%; margin-top: 20px; display: none;" onclick="calculatePriceResults()">
-                        <i class="fa-solid fa-square-poll-vertical"></i> Calcular & Exibir Ranking
+                <!-- ABA 2: SORTEAR E PREVIEW -->
+                <div class="list-box" style="border-top: 3px solid var(--cyan-neon); display: flex; flex-direction: column;">
+                    <h3 style="margin-bottom: 15px; color: var(--cyan-neon); font-weight: 800;"><i class="fa-solid fa-box-open"></i> 2. Sortear Produto para a Rodada</h3>
+                    <button class="btn btn-success" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-bottom: 15px;" onclick="drawPriceProduct()">
+                        <i class="fa-solid fa-dice"></i> SORTEAR AGORA
                     </button>
+                    
+                    <!-- Preview Dinâmico do Produto Sorteado -->
+                    <div id="priceProductPreviewContainer" class="price-product-showcase" style="display: none; flex-grow: 1;">
+                        <h3 style="color: var(--pink-neon); font-size: 1.6rem; font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 15px rgba(255,0,204,0.6); text-transform: uppercase; z-index: 1; text-align: center;">
+                            <i class="fa-solid fa-circle-question"></i> Qual o valor desse produto?
+                        </h3>
+                        <img id="pricePreviewImageActor" src="" style="max-width: 100%; max-height: 180px; border-radius: 12px; margin-bottom: 15px; object-fit: contain; border: 2px solid var(--cyan-neon); box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1;">
+                        <h4 id="pricePreviewTitleActor" style="color: #fff; font-size: 1.4rem; font-weight: 800; z-index: 1; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8);"></h4>
+                    </div>
                 </div>
+            </div>
+
+            <!-- LANÇAMENTO DOS PALPITES -->
+            <div class="list-box" style="border-top: 3px solid var(--pink-neon);">
+                <h3 style="margin-bottom: 15px; color: var(--pink-neon); font-weight: 800;"><i class="fa-solid fa-keyboard"></i> 3. Registrar Palpites dos Jogadores</h3>
+                <div id="uiPricePlayersForm" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 5px;">
+                    <p style="color: #7f7593; font-style: italic;">Sorteie um produto acima para iniciar a rodada e liberar os palpites.</p>
+                </div>
+                <button class="btn btn-danger" id="btnCalculatePriceGame" style="width: 100%; margin-top: 20px; display: none; padding: 15px; font-size: 1.1rem;" onclick="calculatePriceResults()">
+                    <i class="fa-solid fa-square-poll-vertical"></i> Calcular & Exibir Ranking Final
+                </button>
             </div>
 
             <!-- Painel Inline de Classificação O Preço Certo -->
             <div id="uiPriceResultsWrapper" class="list-box" style="margin-top: 30px; display: none; border-top: 4px solid var(--lime-neon);">
                 <div style="text-align: center; margin-bottom: 25px;">
                     <h3 style="color: var(--lime-neon); font-size: 1.8rem; font-weight: 900; text-transform: uppercase;"><i class="fa-solid fa-award"></i> Vencedor do Chute</h3>
-                    <div id="uiPriceWinnerBillboard" style="font-size: 1.4rem; font-weight: bold; margin-top: 12px; color: #fff; line-height: 1.5; padding: 10px; background: rgba(204,255,0,0.05); border-radius: 10px; border: 1px solid rgba(204,255,0,0.15);"></div>
+                    <div id="uiPriceWinnerBillboard" style="font-size: 1.3rem; font-weight: bold; margin-top: 12px; color: #fff; line-height: 1.5; padding: 15px; background: rgba(204,255,0,0.05); border-radius: 10px; border: 1px solid rgba(204,255,0,0.15);"></div>
                 </div>
                 
                 <h4 style="color: var(--cyan-neon); margin-bottom: 15px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;"><i class="fa-solid fa-chart-bar"></i> Ranking Interno de Proximidade</h4>
@@ -549,13 +587,14 @@
 
     </div>
 
-    <!-- MODAL CELEBRATIVO -->
+    <!-- MODAL CELEBRATIVO (AGORA COM TROFÉU E CONFETES) -->
     <div class="celebration-overlay" id="victoryModal">
         <div class="celebration-modal">
-            <h2>🏆 Vencedor 🏆</h2>
-            <div class="winner-title-name" id="uiWinnerModalName">PLAYER NAME</div>
-            <p style="color: #b0a9c0; margin-bottom: 25px;">Mandou muito bem e conquistou o topo!</p>
-            <button class="btn btn-success" onclick="closeVictoryModal()"><i class="fa-solid fa-square-check"></i> OK</button>
+            <div class="giant-trophy">🏆</div>
+            <h2 style="position: relative; z-index: 10;">Vencedor Absoluto</h2>
+            <div class="winner-title-name" id="uiWinnerModalName" style="position: relative; z-index: 10;">PLAYER NAME</div>
+            <p style="color: #b0a9c0; margin-bottom: 25px; position: relative; z-index: 10;">Mandou muito bem e conquistou o topo!</p>
+            <button class="btn btn-success" onclick="closeVictoryModal()" style="position: relative; z-index: 10; font-size: 1.2rem; padding: 12px 30px;"><i class="fa-solid fa-square-check"></i> Receber Prêmio</button>
         </div>
     </div>
 
@@ -575,6 +614,8 @@
         let footballEliminatedPlayers = [];
         let footballCurrentTurn = 0;
 
+        // NOVO: Persistência para o Jogo de Preços
+        let registeredPriceProducts = JSON.parse(localStorage.getItem('scrox_price_products_unified')) || [];
         let priceGameCurrentProduct = { name: '', value: 0, image: '' };
 
         let criterios = JSON.parse(localStorage.getItem('scrox_criterios_unified')) || [];
@@ -677,6 +718,28 @@
             } catch (e) {}
         }
 
+        // NOVO: SOM SATISFATÓRIO DE VITÓRIA / FANFARRA
+        function playVictorySound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = ctx.currentTime;
+                // Notas: C5, E5, G5, C6 (Acorde Maior Arpejado subindo)
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, index) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0, now + index * 0.15);
+                    gain.gain.linearRampToValueAtTime(0.2, now + index * 0.15 + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.15 + 0.7);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now + index * 0.15);
+                    osc.stop(now + index * 0.15 + 0.7);
+                });
+            } catch (e) {}
+        }
+
         // --- 3. NAVEGAÇÃO E PERSISTÊNCIA GERAL ---
         function changeScreen(screenId) {
             document.querySelectorAll('.screen').forEach(scr => scr.classList.remove('active'));
@@ -689,6 +752,7 @@
             localStorage.setItem('scrox_logs_unified', JSON.stringify(systemLogs));
             localStorage.setItem('scrox_criterios_unified', JSON.stringify(criterios));
             localStorage.setItem('scrox_candidatos_unified', JSON.stringify(candidatos));
+            localStorage.setItem('scrox_price_products_unified', JSON.stringify(registeredPriceProducts));
         }
 
         function registerLog(tag, msg) {
@@ -700,12 +764,12 @@
         }
 
         function globalReset() {
-            if(confirm("💥 ATENÇÃO! Isso deletará TODOS os jogadores, notas, candidatos, históricos e configurações de jogos e avaliações. Prosseguir?")) {
+            if(confirm("💥 ATENÇÃO! Isso deletará TODOS os jogadores, notas, candidatos, produtos e históricos. Prosseguir?")) {
                 localStorage.clear();
                 players = []; systemLogs = []; criterios = []; candidatos = []; currentTurnIndex = 0;
                 bombActivePlayers = []; bombEliminatedPlayers = []; bombCurrentTurn = 0;
                 footballActivePlayers = []; footballEliminatedPlayers = []; footballCurrentTurn = 0;
-                priceGameCurrentProduct = { name: '', value: 0, image: '' };
+                registeredPriceProducts = []; priceGameCurrentProduct = { name: '', value: 0, image: '' };
                 registerLog("SISTEMA", "Painel resetado para o padrão de fábrica.");
                 renderInterface();
                 changeScreen('screenMenu');
@@ -895,12 +959,34 @@
             }).join('');
         }
 
-        // --- 7. CELEBRAÇÃO ---
+        // --- 7. CELEBRAÇÃO ÉPICA ---
+        function spawnConfetti() {
+            const container = document.getElementById('globalConfetti');
+            container.style.display = 'block';
+            container.innerHTML = '';
+            const colors = ['#ff00cc', '#00ffff', '#ccff00', '#8a2be2', '#ffffff'];
+            for(let i=0; i < 70; i++) {
+                let conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(conf);
+            }
+        }
+
         function triggerVictoryCelebration(name) {
             document.getElementById('uiWinnerModalName').innerText = name;
             document.getElementById('victoryModal').style.display = "flex";
+            playVictorySound();
+            spawnConfetti();
         }
-        function closeVictoryModal() { document.getElementById('victoryModal').style.display = "none"; }
+
+        function closeVictoryModal() { 
+            document.getElementById('victoryModal').style.display = "none"; 
+            document.getElementById('globalConfetti').style.display = "none";
+            document.getElementById('globalConfetti').innerHTML = "";
+        }
 
         // --- JOGO DA BOMBA ---
         function initBombGame() {
@@ -1152,62 +1238,85 @@
             }, 100);
         }
 
-        // --- NOVO JOGO: ACERTE O PREÇO ---
+        // --- NOVO JOGO: ACERTE O PREÇO (ATUALIZADO) ---
+        function updateRegProdCount() {
+            document.getElementById('regProdCount').innerText = registeredPriceProducts.length;
+        }
+
         function initPriceGame() {
             if(players.length === 0) return alert("Adicione jogadores no menu 'Gerenciar Time' para jogar!");
             changeScreen('screenPriceRight');
+            updateRegProdCount();
             document.getElementById('priceProductPreviewContainer').style.display = 'none';
-            document.getElementById('uiPricePlayersForm').innerHTML = '<p style="color: #7f7593; font-style: italic;">Insira os dados do produto ao lado e inicie a rodada.</p>';
+            document.getElementById('uiPricePlayersForm').innerHTML = '<p style="color: #7f7593; font-style: italic;">Sorteie um produto acima para iniciar a rodada e liberar os palpites.</p>';
             document.getElementById('btnCalculatePriceGame').style.display = 'none';
             document.getElementById('uiPriceResultsWrapper').style.display = 'none';
         }
 
-        function startPriceRound() {
-            const name = document.getElementById('priceGameProdName').value.trim();
-            const value = parseFloat(document.getElementById('priceGameProdValue').value);
-            const imgFile = document.getElementById('priceGameProdImg');
+        function savePriceProduct() {
+            const name = document.getElementById('regProdName').value.trim();
+            const value = parseInt(document.getElementById('regProdValue').value);
+            const imgFile = document.getElementById('regProdImg');
 
             if(!name || isNaN(value) || value <= 0) {
-                return alert("Insira um nome válido e o preço real do produto!");
+                return alert("Insira um nome válido e o valor em Créditos do IMVU!");
             }
-
-            priceGameCurrentProduct.name = name;
-            priceGameCurrentProduct.value = value;
-
-            const setupInputs = () => {
-                document.getElementById('pricePreviewTitleActor').innerText = name;
-                if(priceGameCurrentProduct.image) {
-                    document.getElementById('pricePreviewImageActor').src = priceGameCurrentProduct.image;
-                    document.getElementById('pricePreviewImageActor').style.display = 'inline-block';
-                } else {
-                    document.getElementById('pricePreviewImageActor').style.display = 'none';
-                }
-                document.getElementById('priceProductPreviewContainer').style.display = 'block';
-
-                const formBox = document.getElementById('uiPricePlayersForm');
-                formBox.innerHTML = players.map(p => `
-                    <div class="item-card" style="border-left: 3px solid var(--purple-galactic);">
-                        <span style="font-weight: 600;"><i class="fa-solid fa-user-tag" style="color: var(--cyan-neon); margin-right: 6px;"></i> ${p.name}</span>
-                        <input type="number" class="player-price-guess-input" data-player="${p.name}" placeholder="Palpite (R$)" step="0.01" style="max-width: 140px; text-align: right; margin-bottom: 0;">
-                    </div>
-                `).join('');
-
-                document.getElementById('btnCalculatePriceGame').style.display = 'block';
-                document.getElementById('uiPriceResultsWrapper').style.display = 'none';
-                registerLog("PREÇO", `Rodada iniciada: '${name}' avaliado em R$ ${value.toFixed(2)}.`);
-            };
 
             if(imgFile.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    priceGameCurrentProduct.image = e.target.result;
-                    setupInputs();
+                    registeredPriceProducts.push({ name: name, value: value, image: e.target.result });
+                    persistData();
+                    updateRegProdCount();
+                    document.getElementById('regProdName').value = '';
+                    document.getElementById('regProdValue').value = '';
+                    imgFile.value = '';
+                    registerLog("PREÇO", `Produto cadastrado: '${name}'.`);
+                    alert("Produto Salvo com Sucesso!");
                 };
                 reader.readAsDataURL(imgFile.files[0]);
             } else {
-                priceGameCurrentProduct.image = '';
-                setupInputs();
+                registeredPriceProducts.push({ name: name, value: value, image: '' });
+                persistData();
+                updateRegProdCount();
+                document.getElementById('regProdName').value = '';
+                document.getElementById('regProdValue').value = '';
+                registerLog("PREÇO", `Produto cadastrado sem imagem: '${name}'.`);
+                alert("Produto Salvo com Sucesso!");
             }
+        }
+
+        function drawPriceProduct() {
+            if(registeredPriceProducts.length === 0) {
+                return alert("Cadastre pelo menos um produto no banco antes de sortear!");
+            }
+
+            // Seleciona um produto aleatório
+            const randomIndex = Math.floor(Math.random() * registeredPriceProducts.length);
+            priceGameCurrentProduct = registeredPriceProducts[randomIndex];
+
+            // Atualiza UI de Exibição Bonita
+            document.getElementById('pricePreviewTitleActor').innerText = priceGameCurrentProduct.name;
+            if(priceGameCurrentProduct.image) {
+                document.getElementById('pricePreviewImageActor').src = priceGameCurrentProduct.image;
+                document.getElementById('pricePreviewImageActor').style.display = 'inline-block';
+            } else {
+                document.getElementById('pricePreviewImageActor').style.display = 'none';
+            }
+            document.getElementById('priceProductPreviewContainer').style.display = 'flex';
+
+            // Prepara formulário de palpites dos jogadores
+            const formBox = document.getElementById('uiPricePlayersForm');
+            formBox.innerHTML = players.map(p => `
+                <div class="item-card" style="border-left: 3px solid var(--purple-galactic); background: rgba(0,0,0,0.5);">
+                    <span style="font-weight: 600; font-size: 1.1rem;"><i class="fa-solid fa-user-tag" style="color: var(--cyan-neon); margin-right: 6px;"></i> ${p.name}</span>
+                    <input type="number" class="player-price-guess-input" data-player="${p.name}" placeholder="Palpite (Créditos)" style="max-width: 170px; text-align: right; margin-bottom: 0; font-weight: bold; font-size: 1.1rem; padding: 10px;">
+                </div>
+            `).join('');
+
+            document.getElementById('btnCalculatePriceGame').style.display = 'block';
+            document.getElementById('uiPriceResultsWrapper').style.display = 'none';
+            registerLog("PREÇO", `Rodada iniciada! Produto Sorteado: '${priceGameCurrentProduct.name}'.`);
         }
 
         function calculatePriceResults() {
@@ -1217,7 +1326,7 @@
 
             inputs.forEach(inp => {
                 const pName = inp.getAttribute('data-player');
-                const val = parseFloat(inp.value);
+                const val = parseInt(inp.value);
                 if(isNaN(val) || val < 0) {
                     inputIncompleto = true;
                 }
@@ -1237,9 +1346,9 @@
                 
                 let logicaTexto = "";
                 if(diferenca > 0) {
-                    logicaTexto = `faltou R$ ${diferenca.toFixed(2)} para completar`;
+                    logicaTexto = `faltou ${diferenca} Créditos para completar`;
                 } else if(diferenca < 0) {
-                    logicaTexto = `passou R$ ${absDiferenca.toFixed(2)} do valor`;
+                    logicaTexto = `passou ${absDiferenca} Créditos do valor`;
                 } else {
                     logicaTexto = "acertou o valor exato em cheio!";
                 }
@@ -1248,7 +1357,7 @@
             });
 
             // Ordena pelo menor erro absoluto (quem chegou mais perto)
-            processados.sort((a, b) => a.absDiff - b.absDiff || a.absDiferenca - b.absDiferenca);
+            processados.sort((a, b) => a.absDiferenca - b.absDiferenca);
 
             const vencedor = processados[0];
             
@@ -1256,13 +1365,15 @@
             let globalPlayer = players.find(p => p.name === vencedor.name);
             if(globalPlayer) globalPlayer.xp += 150;
 
-            registerLog("PREÇO", `Fim de Jogo! Vencedor: ${vencedor.name} (Chute: R$ ${vencedor.guess.toFixed(2)} | ${vencedor.txt}).`);
+            registerLog("PREÇO", `Fim de Jogo! Vencedor: ${vencedor.name} (Chute: ${vencedor.guess} Créditos | ${vencedor.txt}).`);
             persistData();
             renderInterface();
 
-            // Mensagem explicativa idêntica ao exemplo solicitado
-            let msgFormatada = `👑 <span style="color: var(--cyan-neon); font-weight: 800;">${vencedor.name}</span> foi o mais próximo!<br>O produto custa <b>R$ ${valorReal.toFixed(2)}</b>, o palpite foi <b>R$ ${vencedor.guess.toFixed(2)}</b>, ou seja, <u>${vencedor.txt}</u>.`;
+            // Mensagem explicativa
+            let msgFormatada = `👑 <span style="color: var(--cyan-neon); font-weight: 800;">${vencedor.name}</span> foi o mais próximo!<br>O produto custa <b>${valorReal} Créditos</b>, o palpite foi <b>${vencedor.guess} Créditos</b>, ou seja, <u>${vencedor.txt}</u>.`;
             document.getElementById('uiPriceWinnerBillboard').innerHTML = msgFormatada;
+            
+            // Aciona o Modal Épico
             triggerVictoryCelebration(vencedor.name);
 
             // Renderiza as barrinhas de valor de proximidade
@@ -1275,7 +1386,7 @@
                     <div class="rank-info">
                         <div style="font-weight: 800; text-transform: uppercase; display: flex; justify-content: space-between;">
                             <span>${item.name}</span>
-                            <span style="color: var(--pink-neon); font-size: 0.9rem;">Palpite: R$ ${item.guess.toFixed(2)}</span>
+                            <span style="color: var(--pink-neon); font-size: 0.95rem;">Palpite: ${item.guess} Créditos</span>
                         </div>
                         <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#aaa; margin-top: 3px;">
                             <span>Nota: ${item.txt}</span>
